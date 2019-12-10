@@ -240,7 +240,7 @@ void MainContentComponent::getNextAudioBlock (const AudioSourceChannelInfo& buff
     if( !isRecordingIr )
     {
         processAmbisonicBuffer( bufferToFill.buffer );
-        if( audioRecorder.isRecording() ){ recordAmbisonicBuffer(); }
+        if( audioRecorder.isRecording() ){ recordAmbisonicBuffer(); }
         fillNextAudioBlock( bufferToFill.buffer );
     }
     // simply clear output buffer

@@ -125,7 +125,7 @@ bool openAudioFile()
 {
     bool fileOpenedSucess = false;
     
-    FileChooser chooser ("Select a Wave file to play...", File::nonexistent, "*.wav");
+    FileChooser chooser ("Select a Wave file to play...", File(), "*.wav");
     
     if (chooser.browseForFileToOpen())
     {
