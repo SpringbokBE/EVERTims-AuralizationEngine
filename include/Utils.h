@@ -189,7 +189,7 @@ inline Array<float> from10to3bands( const Array<float> & vect10bands )
 inline File getFileFromString( const String & fileName )
 {
     auto thisDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory();
-    
+ 
     File resourceDir; bool resourceDirDefined = false;
     if (SystemStats::getOperatingSystemName().startsWithIgnoreCase("Mac"))
     {
@@ -198,8 +198,16 @@ inline File getFileFromString( const String & fileName )
     }
     else if (SystemStats::getOperatingSystemName().startsWithIgnoreCase("Win") || SystemStats::getOperatingSystemName().startsWithIgnoreCase("Linux"))
     {
-        resourceDir = thisDir.getChildFile("data");
+		resourceDir = thisDir.getParentDirectory().getChildFile("data");
         resourceDirDefined = true;
+
+		if (fileName.containsChar('/'))
+		{
+			int slashIndex = fileName.indexOfChar('/');
+			String first = fileName.substring(0, slashIndex);
+			String second = fileName.substring(slashIndex + 1);
+			return resourceDir.getChildFile(first).getChildFile(second).getFullPathName();
+		}
     }
     else
     {

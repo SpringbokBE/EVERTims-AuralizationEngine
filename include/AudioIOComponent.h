@@ -108,10 +108,8 @@ AudioIOComponent()
     adcToggle.addListener (this);
     
     // open audio file "impulse" at startup
-    auto thisDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory();
-    File resourceDir = thisDir.getParentDirectory().getChildFile("Resources");
-    File audioFile = resourceDir.getChildFile("impulse.wav").getFullPathName();
-    bool fileOpenedSucess = loadAudioFile( audioFile );
+	File audioFile = getFileFromString("sounds/impulse.wav");
+	bool fileOpenedSucess = loadAudioFile( audioFile );
     audioFilePlayButton.setEnabled ( fileOpenedSucess );
 }
 

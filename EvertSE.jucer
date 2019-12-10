@@ -123,7 +123,7 @@
     <VS2019 targetFolder="Builds/VisualStudio2019" externalLibraries="mysofa.lib&#10;zlibwapi.lib">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" headerPath="../../include&#10;../../include/AmbixEncode&#10;../../include/AmbixEncode/SphericalHarmonic/&#10;../../include/FIRFilter"
-                       libraryPath="../../lib" postbuildCommand="copy ..\..\bin\zlibwapi.dll .\x64\Debug\App\&#10;Xcopy /E /I ..\..\data .\x64\Debug\"/>
+                       libraryPath="../../lib" postbuildCommand="copy ..\..\bin\zlibwapi.dll .\x64\Debug\App\&#10;mkdir .\x64\Debug\data&#10;Xcopy /E /I /Y ..\..\data .\x64\Debug\data\"/>
         <CONFIGURATION isDebug="0" name="Release" headerPath="../../include&#10;../../include/AmbixEncode&#10;../../include/AmbixEncode/SphericalHarmonic/&#10;../../include/FIRFilter"
                        libraryPath="../../lib"/>
       </CONFIGURATIONS>

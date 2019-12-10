@@ -638,8 +638,8 @@ void MainContentComponent::comboBoxChanged(ComboBox* comboBox)
     {
         // load new file
         string filename;
-        if( comboBox->getSelectedId() == 1 ) filename = "omni.sofa";
-        else filename = "directional.sofa";
+        if( comboBox->getSelectedId() == 1 ) filename = "directivity/omni.sofa";
+        else filename = "directivity/directional.sofa";
         const char *fileChar = filename.c_str();
         sourceImagesHandler.directivityHandler.loadFile( fileChar );
         

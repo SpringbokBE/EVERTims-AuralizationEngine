@@ -57,7 +57,7 @@ public:
 BinauralEncoder()
 {
     // load HRIR filters
-    File hrirFile = getFileFromString("ClubFritz1_hrir.bin");
+    File hrirFile = getFileFromString("irs/ClubFritz1_hrir.bin");
     loadHrir( hrirFile );
 }
 

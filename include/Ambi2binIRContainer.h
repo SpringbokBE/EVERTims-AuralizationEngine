@@ -22,7 +22,7 @@ public:
 Ambi2binIRContainer()
 {
     // load HRIR, ITD, ILD, etc.
-    File hoa2binFile = getFileFromString("hoa2bin_order2_IRC_1008_R_HRIR.bin");
+    File hoa2binFile = getFileFromString("irs/hoa2bin_order2_IRC_1008_R_HRIR.bin");
     loadIR( hoa2binFile );
 }
 
