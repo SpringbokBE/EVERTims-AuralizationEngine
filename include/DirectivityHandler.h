@@ -49,7 +49,7 @@ DirectivityHandler()
 }
   
 void loadFile( const string & filenameStr )
-{
+	{
     // get file path
     File hrirFile = getFileFromString(filenameStr);
     
@@ -58,16 +58,16 @@ void loadFile( const string & filenameStr )
     const char *filename = path.getCharPointer();
     
 	// Windows: skip directivity for now (bug at load)
-	if (SystemStats::getOperatingSystemName().startsWithIgnoreCase("Win")){ 
-		isLoaded = false;
-		return;
-	}
+	//if (SystemStats::getOperatingSystemName().startsWithIgnoreCase("Win")){ 
+	//	isLoaded = false;
+	//	return;
+	//}
 
     // load
     int err;
     filter_length = 0;
-    sofaEasyStruct = mysofa_open_noNorm(filename, sampleRate, &filter_length, &err);
-    
+    sofaEasyStruct = mysofa_open_no_norm(filename, sampleRate, &filter_length, &err);
+
     // check if file loaded correctly
     jassert( sofaEasyStruct != NULL );
     
@@ -92,8 +92,8 @@ void loadFile( const string & filenameStr )
 Array<float> getGains( const double azim, const double elev )
 {
     // make sure values are in expected range
-    jassert(azim >= -M_PI && azim <= M_PI);
-    jassert(elev >= -M_PI/2 && elev <= M_PI/2);
+    jassert(azim >= -M_PI - 0.0001 && azim <= M_PI + 0.0001);
+    jassert(elev >= -M_PI/2 - 0.0001 && elev <= M_PI/2 + 0.0001);
     
     // sph to cart
     float x = cosf(elev)*cosf(azim);
@@ -102,7 +102,7 @@ Array<float> getGains( const double azim, const double elev )
     
     // get interpolated gain value
     mysofa_getfilter_float( sofaEasyStruct, x, y, z, leftIR, rightIR, &leftDelay, &rightDelay );
-    
+
     // fill output
     for( int i = 0; i < FILTER_LENGTH; i++ )
     {
