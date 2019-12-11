@@ -22,3 +22,4 @@ Utils/testIRs/*.wav
 
 # Utils: test image source export
 Utils/testOscState/*.txt
+/bin/EvertSE.exe

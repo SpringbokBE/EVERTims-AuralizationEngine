@@ -125,7 +125,7 @@
         <CONFIGURATION isDebug="1" name="Debug" headerPath="../../include&#10;../../include/AmbixEncode&#10;../../include/AmbixEncode/SphericalHarmonic/&#10;../../include/FIRFilter"
                        libraryPath="../../lib" postbuildCommand="copy ..\..\bin\zlibwapi.dll .\x64\Debug\App\&#10;mkdir .\x64\Debug\data&#10;Xcopy /E /I /Y ..\..\data .\x64\Debug\data\"/>
         <CONFIGURATION isDebug="0" name="Release" headerPath="../../include&#10;../../include/AmbixEncode&#10;../../include/AmbixEncode/SphericalHarmonic/&#10;../../include/FIRFilter"
-                       libraryPath="../../lib"/>
+                       libraryPath="../../lib" postbuildCommand="copy .\x64\Release\App\EvertSE.exe ..\..\bin\"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_osc" path="..\..\..\..\Software\JUCE\modules"/>
