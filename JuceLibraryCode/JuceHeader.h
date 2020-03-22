@@ -47,7 +47,7 @@
 #if ! JUCE_DONT_DECLARE_PROJECTINFO
 namespace ProjectInfo
 {
-    const char* const  projectName    = "EvertSE";
+    const char* const  projectName    = "AuralisationEngine";
     const char* const  companyName    = "";
     const char* const  versionString  = "0.3.3";
     const int          versionNumber  = 0x303;
