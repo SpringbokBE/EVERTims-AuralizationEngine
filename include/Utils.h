@@ -1,27 +1,32 @@
-#pragma once
+#ifndef UTILS_H_INCLUDED
+#define UTILS_H_INCLUDED
 
 #include <vector>
 #include <math.h>
 #include <cmath>
+#include <complex>
+#include <Eigen/Eigen>
 
-// define M_PI for Windows
+#include "../JuceLibraryCode/JuceHeader.h"
+
+// Define M_PI for Windows
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
 
-#include "../JuceLibraryCode/JuceHeader.h"
-
-#include <Eigen/Eigen>
-
-#define SOUND_SPEED 343 // speed of sound in m.s-1
-#define NUM_OCTAVE_BANDS 10 // number of octave bands used in filter bank for room absorption
+#define SOUND_SPEED 343 // Speed of sound in m.s-1
+#define NUM_OCTAVE_BANDS 10 // Number of octave bands used in filter bank for room absorption
 #define AMBI_ORDER 2 // Ambisonic order
 #define N_AMBI_CH 9 // Associated number of Ambisonic channels [pow(AMBI_ORDER+1,2)]
-#define AMBI2BIN_IR_LENGTH 221 // length of loaded filters (in time samples)
+#define AMBI2BIN_IR_LENGTH 221 // Length of loaded filters (in time samples)
 
+template <typename T>
+using ComplexVector = std::vector<std::complex<T>>;
 
-//==========================================================================
-// EVERTIMS STRUCTURES
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+// EVERTims structures.
 
 struct EL_ImageSource
 {
@@ -47,14 +52,7 @@ struct EL_Listener
     Eigen::Matrix3f rotationMatrix;
 };
 
-//==========================================================================
-// FIR AND OouraFFT ELEMENTS
-
-#include <complex>
-
-template <typename T>
-using ComplexVector = std::vector<std::complex<T>>;
-
+// FIR and OouraFFT elements.
 
 inline bool isPowerOf2( const size_t val )
 {
@@ -74,12 +72,11 @@ inline int nextPowerOf2( int x )
     return x + 1;
 }
 
-//==========================================================================
-// MATHS METHODS
+// Math methods.
 
+inline Eigen::Vector3f cartesianToSpherical(const Eigen::Vector3f& p)
 // SPAT convention: azimuth in (xOy) 0° is facing y, clockwise,
 // elevation in (zOx), 0° is on (xOy), 90° on z+, -90° on z-
-inline Eigen::Vector3f cartesianToSpherical(const Eigen::Vector3f& p)
 {
     float radius = std::sqrt(p(0) * p(0) + p(1) * p(1) + p(2) * p(2));
     float azimuth = std::atan2(p(0), p(1));
@@ -115,8 +112,8 @@ inline Type round2(Type x, int numberOfDecimals){
     return round(x * pow(10,numberOfDecimals)) / pow(10,numberOfDecimals);
 }
 
-// return max value of vector
 inline float getMaxValue(std::vector<float> vectIn)
+// Return max value of vector
 {
     if( vectIn.size() == 0 ) { return 0; } // not sure this is wise..
     else{
@@ -125,8 +122,8 @@ inline float getMaxValue(std::vector<float> vectIn)
     }
 }
 
-// return min value of vector
 inline float getMinValue( const std::vector<float> & vectIn )
+// Return min value of vector
 {
     if( vectIn.size() == 0 ) { return 0; } // not sure this is wise..
     else{
@@ -135,8 +132,8 @@ inline float getMinValue( const std::vector<float> & vectIn )
     }
 }
 
-// general function used to convert 10 frequency bands coefficients to 3 bands
 inline std::vector<float> from10to3bands( const std::vector<float> & vect10bands )
+// General function used to convert 10 frequency bands coefficients to 3 bands
 {
     // init
     std::vector<float> vect3bands;
@@ -158,8 +155,8 @@ inline std::vector<float> from10to3bands( const std::vector<float> & vect10bands
     return vect3bands;
 }
 
-// general function used to convert 10 frequency bands coefficients to 3 bands
 inline Array<float> from10to3bands( const Array<float> & vect10bands )
+// General function used to convert 10 frequency bands coefficients to 3 bands
 {
     // init
     Array<float> vect3bands;
@@ -185,8 +182,8 @@ inline Array<float> from10to3bands( const Array<float> & vect10bands )
     return vect3bands;
 }
 
-// return full file path (in resources dir, depends on OS)
 inline File getFileFromString( const String & fileName )
+// Return full file path (in resources dir, depends on OS)
 {
     auto thisDir = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory();
  
@@ -223,8 +220,8 @@ inline File getFileFromString( const String & fileName )
     return resourceDir.getChildFile(fileName).getFullPathName();
 }
 
-// save content of data to desktop in fileName
 inline void saveStringToDesktop( const String & fileName, const String & data)
+// Save content of data to desktop in fileName
 {
     // get file
     const File file (File::getSpecialLocation (File::userDesktopDirectory)
@@ -232,3 +229,8 @@ inline void saveStringToDesktop( const String & fileName, const String & data)
     // write to file
     file.replaceWithText ( data );
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+#endif // UTILS_H_INCLUDED

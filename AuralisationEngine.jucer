@@ -59,9 +59,27 @@
         <FILE id="DHDJLE" name="FIRFilter.cpp" compile="1" resource="0" file="src/FIRFilter/FIRFilter.cpp"/>
         <FILE id="N0XpeZ" name="OouraFFT.cpp" compile="1" resource="0" file="src/FIRFilter/OouraFFT.cpp"/>
       </GROUP>
+      <FILE id="XiPNfF" name="Ambi2binIRContainer.cpp" compile="1" resource="0"
+            file="src/Ambi2binIRContainer.cpp"/>
+      <FILE id="KXo3WV" name="AudioIOComponent.cpp" compile="1" resource="0"
+            file="src/AudioIOComponent.cpp"/>
+      <FILE id="uSfm2S" name="AudioRecorder.cpp" compile="1" resource="0"
+            file="src/AudioRecorder.cpp"/>
+      <FILE id="C6VS88" name="BinauralEncoder.cpp" compile="1" resource="0"
+            file="src/BinauralEncoder.cpp"/>
+      <FILE id="hS2WBx" name="DelayLine.cpp" compile="1" resource="0" file="src/DelayLine.cpp"/>
+      <FILE id="mtq9EQ" name="DirectivityHandler.cpp" compile="1" resource="0"
+            file="src/DirectivityHandler.cpp"/>
+      <FILE id="C6HXgt" name="FilterBank.cpp" compile="1" resource="0" file="src/FilterBank.cpp"/>
+      <FILE id="VlMN2t" name="LedComponent.cpp" compile="1" resource="0"
+            file="src/LedComponent.cpp"/>
       <FILE id="WOmEyi" name="Main.cpp" compile="1" resource="0" file="src/Main.cpp"/>
       <FILE id="l9hY4R" name="MainComponent.cpp" compile="1" resource="0"
             file="src/MainComponent.cpp"/>
+      <FILE id="SLJpNM" name="OSCHandler.cpp" compile="1" resource="0" file="src/OSCHandler.cpp"/>
+      <FILE id="byLtR6" name="ReverbTail.cpp" compile="1" resource="0" file="src/ReverbTail.cpp"/>
+      <FILE id="xRXeV0" name="SourceImagesHandler.cpp" compile="1" resource="0"
+            file="src/SourceImagesHandler.cpp"/>
     </GROUP>
     <GROUP id="{F473110D-BA5F-16DB-4E0C-8A8135AFEAFF}" name="data">
       <GROUP id="{C1CC0D36-5AE7-3548-1003-DCC29035F564}" name="directivity">
@@ -95,16 +113,16 @@
   <EXPORTFORMATS>
     <VS2019 targetFolder="Builds" externalLibraries="zlib.lib&#10;mysofa.lib">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug32" headerPath="../include&#10;../include/AmbixEncode&#10;../include/AmbixEncode/SphericalHarmonic/&#10;../include/FIRFilter"
+        <CONFIGURATION isDebug="1" name="Debug32" headerPath="../include&#10;../include/AmbixEncode&#10;../include/AmbixEncode/SphericalHarmonic/&#10;../include/FIRFilter&#10;../asio/common&#10;../asio/host"
                        libraryPath="../lib32" postbuildCommand="copy ..\bin32\zlib.dll .\Win32\Debug32\App\&#10;mkdir .\Win32\Debug32\data&#10;Xcopy /E /I /Y ..\data .\Win32\Debug32\data\"
                        winArchitecture="Win32" targetName="AuralisationEngine32"/>
-        <CONFIGURATION isDebug="0" name="Release32" headerPath="../include&#10;../include/AmbixEncode&#10;../include/AmbixEncode/SphericalHarmonic/&#10;../include/FIRFilter"
+        <CONFIGURATION isDebug="0" name="Release32" headerPath="../include&#10;../include/AmbixEncode&#10;../include/AmbixEncode/SphericalHarmonic/&#10;../include/FIRFilter&#10;../asio/common&#10;../asio/host"
                        libraryPath="../lib32" postbuildCommand="copy .\Win32\Release32\App\AuralisationEngine32.exe ..\bin32\"
                        winArchitecture="Win32" targetName="AuralisationEngine32"/>
-        <CONFIGURATION isDebug="1" name="Debug64" headerPath="../include&#10;../include/AmbixEncode&#10;../include/AmbixEncode/SphericalHarmonic/&#10;../include/FIRFilter"
+        <CONFIGURATION isDebug="1" name="Debug64" headerPath="../include&#10;../include/AmbixEncode&#10;../include/AmbixEncode/SphericalHarmonic/&#10;../include/FIRFilter&#10;../asio/common&#10;../asio/host"
                        libraryPath="../lib64" postbuildCommand="copy ..\bin64\zlib.dll .\x64\Debug64\App\&#10;mkdir .\x64\Debug64\data&#10;Xcopy /E /I /Y ..\data .\x64\Debug64\data\"
                        targetName="AuralisationEngine64"/>
-        <CONFIGURATION isDebug="0" name="Release64" headerPath="../include&#10;../include/AmbixEncode&#10;../include/AmbixEncode/SphericalHarmonic/&#10;../include/FIRFilter"
+        <CONFIGURATION isDebug="0" name="Release64" headerPath="../include&#10;../include/AmbixEncode&#10;../include/AmbixEncode/SphericalHarmonic/&#10;../include/FIRFilter&#10;../asio/common&#10;../asio/host"
                        libraryPath="../lib64" postbuildCommand="copy .\x64\Release64\App\AuralisationEngine64.exe ..\bin64\"
                        targetName="AuralisationEngine64"/>
       </CONFIGURATIONS>
@@ -138,7 +156,7 @@
     <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0"/>
     <MODULE id="juce_osc" showAllCode="1" useLocalCopy="0"/>
   </MODULES>
-  <JUCEOPTIONS/>
+  <JUCEOPTIONS JUCE_ASIO="0" JUCE_DIRECTSOUND="1"/>
   <LIVE_SETTINGS>
     <OSX headerPath="" systemHeaderPath="./libs/eigen-eigen-7403112d5871&#10;/usr/local/include"/>
     <WINDOWS/>

@@ -23,3 +23,6 @@ Utils/testIRs/*.wav
 # Utils: test image source export
 Utils/testOscState/*.txt
 /bin/EvertSE.exe
+
+# Ignore ASIO SDK for now because of license.
+asio/*

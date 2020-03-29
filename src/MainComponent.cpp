@@ -2,41 +2,42 @@
 #include "MainComponent.h"
 #include "Utils.h"
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
-MainContentComponent::MainContentComponent():
-oscHandler(),
-clippingLed( *this ),
-audioIOComponent(),
-audioRecorder(),
-delayLine(),
-sourceImagesHandler(),
-ambi2binContainer()
+MainComponent::MainComponent() :
+	oscHandler(),
+	clippingLed(),
+	audioIOComponent(),
+	audioRecorder(),
+	delayLine(),
+	sourceImagesHandler(),
+	ambi2binContainer()
 {
-    // set window dimensions
+    // Set window dimensions.
     setSize (650, 700);
     
-    // specify the required number of input and output channels
+    // Specify the required number of input and output channels.
     setAudioChannels (2, 2);
     
-    // add to change listeners
+    // Add to change listeners.
     oscHandler.addChangeListener(this);
-    
-    // add audioIOComponent as addAudioCallback for adc input
+   
+    // Add audioIOComponent as addAudioCallback for adc input.
     deviceManager.addAudioCallback(&audioIOComponent);
     
-    //==========================================================================
-    // INIT GUI ELEMENTS
+    // Initialise GUI elements.
     
-    // add GUI sub-components
+    // Add GUI sub-components.
     addAndMakeVisible(audioIOComponent);
     addAndMakeVisible(clippingLed);
     clippingLed.setAlwaysOnTop(true);
     
-    // setup logo image
+    // Setup logo image.
     logoImage = ImageCache::getFromMemory(BinaryData::evertims_logo_512_png, BinaryData::evertims_logo_512_pngSize);
     logoImage = logoImage.rescaled(logoImage.getWidth()/2, logoImage.getHeight()/2);
     
-    // init log text box
+    // Initialise log text box.
     addAndMakeVisible (logTextBox);
     logTextBox.setMultiLine (true);
     logTextBox.setReturnKeyStartsNewLine (true);
@@ -49,7 +50,7 @@ ambi2binContainer()
     logTextBox.setColour (TextEditor::outlineColourId, Colours::whitesmoke);
     logTextBox.setColour (TextEditor::shadowColourId, Colours::darkorange);
     
-    // init text buttons
+    // Initialise text buttons.
     buttonMap.insert({
         { &saveIrButton, "Save RIRs to Desktop" },
         { &saveOscButton, "Save OSC state to Desktop" },
@@ -68,7 +69,7 @@ ambi2binContainer()
     saveOscButton.setColour (TextButton::buttonColourId, Colour(PixelARGB(160,0,0,0)));
     clearSourceImageButton.setColour (TextButton::buttonColourId, Colours::indianred);
     
-    // init combo boxes
+    // Initialise combo boxes.
     comboBoxMap.insert({
         { &numFrequencyBandsComboBox, {"3", "10"} },
         { &srcDirectivityComboBox, {"omni", "directional"} },
@@ -90,7 +91,7 @@ ambi2binContainer()
         obj->setSelectedId(1);
     }
     
-    // init sliders
+    // Initialise sliders.
     sliderMap.insert({
         { &gainReverbTailSlider, { 0.0, 2.0, 1.0} }, // min, max, value
         { &gainDirectPathSlider, { 0.0, 2.0, 1.0} },
@@ -121,7 +122,7 @@ ambi2binContainer()
     crossfadeStepSlider.setRotaryParameters(10 / 8.f * 3.1416, 22 / 8.f * 3.1416, true);
     crossfadeStepSlider.setSkewFactor(0.7);
     
-    // init labels
+    // Initialise labels.
     labelMap.insert({
         { &numFrequencyBandsLabel, "Num absorb freq bands:" },
         { &srcDirectivityLabel, "Source directivity:" },
@@ -146,7 +147,7 @@ ambi2binContainer()
     parameterLabel.setColour(Label::backgroundColourId, Colour(30, 30, 30));
     logLabel.setColour(Label::backgroundColourId, Colour(30, 30, 30));
     
-    // init toggles
+    // Initialise toggles.
     toggleMap.insert({
         { &reverbTailToggle, "Reverb tail" },
         { &enableDirectToBinaural, "Direct to binaural" },
@@ -167,51 +168,54 @@ ambi2binContainer()
         }
     }
     
-    // disable direct to binaural until fixed
+    // Disable direct to binaural until fixed
     // enableDirectToBinaural.setEnabled(false);
     enableDirectToBinaural.setToggleState(false, juce::sendNotification);
     enableRecord.setToggleState(false, juce::sendNotification);
 }
 
-MainContentComponent::~MainContentComponent()
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+MainComponent::~MainComponent()
 {
-    // fix denied access at close when sound playing,
+    // Fix denied access at close when sound playing,
     // see https://forum.juce.com/t/tutorial-playing-sound-files-raises-an-exception-on-2nd-load/15738/2
     audioIOComponent.transportSource.setSource(nullptr);
     
     shutdownAudio();
 }
 
-//==============================================================================
-void MainContentComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
+// This function will be called when the audio device is started, or when
+// its settings (i.e. sample rate, block size, etc) are changed.
+// Called on the audio thread, not the GUI thread.
 {
-    // This function will be called when the audio device is started, or when
-    // its settings (i.e. sample rate, block size, etc) are changed.
-    // Called on the audio thread, not the GUI thread.
     
-    // audio file reader & adc input
+    // Audio file reader & adc input
     audioIOComponent.prepareToPlay (samplesPerBlockExpected, sampleRate);
     
-    // recorder
+    // Recorder
     audioRecorder.prepareToPlay (samplesPerBlockExpected, sampleRate);
     
-    // working buffer
+    // Working buffer
     workingBuffer.setSize(1, samplesPerBlockExpected);
-    // ambisonic buffer holds 2 stereo channels (first) + ambisonic channels
+    // Ambisonic buffer holds 2 stereo channels (first) + ambisonic channels
     ambisonicBuffer.setSize(2 + N_AMBI_CH, samplesPerBlockExpected);
-    // because of stupid design choice of ambisonicBuffer, require this additional ambisonicRecordBuffer. to clean..
+    // Because of stupid design choice of ambisonicBuffer, require this additional ambisonicRecordBuffer. to clean..
     ambisonicRecordBuffer.setSize(N_AMBI_CH, samplesPerBlockExpected);
     
-    // keep track of sample rate
+    // Keep track of sample rate
     localSampleRate = sampleRate;
     localSamplesPerBlockExpected = samplesPerBlockExpected;
     
-    // init delay line
+    // Initialise delay line.
     delayLine.prepareToPlay(samplesPerBlockExpected, sampleRate);
     delayLine.setSize(1, sampleRate); // arbitrary length of 1 sec
     sourceImagesHandler.prepareToPlay (samplesPerBlockExpected, sampleRate);
     
-    // init ambi 2 bin decoding: fill in data in ABIR filtered and ABIR filter themselves
+    // Initialise ambi 2 bin decoding: fill in data in ABIR filtered and ABIR filter themselves
     for( int i = 0; i < N_AMBI_CH; i++ )
     {
         ambi2binFilters[ 2*i ].init(samplesPerBlockExpected, AMBI2BIN_IR_LENGTH);
@@ -221,46 +225,50 @@ void MainContentComponent::prepareToPlay (int samplesPerBlockExpected, double sa
     }
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
 // Audio Processing (split in "processAmbisonicBuffer" and "fillNextAudioBlock" to enable
 // IR recording: using the same methods as the main thread)
-void MainContentComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
 {
-    // check if update required
-    if( updateNumFreqBandrequired ){
-        sourceImagesHandler.setFilterBankSize(numFreqBands);
-        updateNumFreqBandrequired = false;
-        // trigger general update: must re-dimension abs.coeffs and trigger update future->current, see in function
-        sourceImagesHandler.updateFromOscHandler(oscHandler);
-    }
+  // Check if update required
+  if( updateNumFreqBandrequired ){
+      sourceImagesHandler.setFilterBankSize(numFreqBands);
+      updateNumFreqBandrequired = false;
+      // Trigger general update: must re-dimension abs.coeffs and trigger update future->current, see in function
+      sourceImagesHandler.updateFromOscHandler(oscHandler);
+  }
     
-    // fill buffer with audiofile data
-    audioIOComponent.getNextAudioBlock(bufferToFill);
+  // Fill buffer with audiofile data
+  audioIOComponent.getNextAudioBlock(bufferToFill);
     
-    // execute main audio processing
-    if( !isRecordingIr )
-    {
-        processAmbisonicBuffer( bufferToFill.buffer );
-        if( audioRecorder.isRecording() ){ recordAmbisonicBuffer(); }
-        fillNextAudioBlock( bufferToFill.buffer );
-    }
-    // simply clear output buffer
-    else
-    {
-        bufferToFill.clearActiveBufferRegion();
-    }
+  // Execute main audio processing
+  if( !isRecordingIr )
+  {
+      processAmbisonicBuffer( bufferToFill.buffer );
+      if( audioRecorder.isRecording() ){ recordAmbisonicBuffer(); }
+      fillNextAudioBlock( bufferToFill.buffer );
+  }
+  // Simply clear output buffer
+  else
+  {
+      bufferToFill.clearActiveBufferRegion();
+  }
     
-    // check if source images need update (i.e. update called by OSC handler
-    // while source images in the midst of a crossfade
-    if( sourceImageHandlerNeedsUpdate && sourceImagesHandler.crossfadeOver )
-    {
-        sourceImagesHandler.updateFromOscHandler(oscHandler);
-        requireDelayLineSizeUpdate = true;
-        sourceImageHandlerNeedsUpdate = false;
-    }
+  // Check if source images need update (i.e. update called by OSC handler
+  // while source images in the midst of a crossfade
+  if( sourceImageHandlerNeedsUpdate && sourceImagesHandler.crossfadeOver )
+  {
+      sourceImagesHandler.updateFromOscHandler(oscHandler);
+      requireDelayLineSizeUpdate = true;
+      sourceImageHandlerNeedsUpdate = false;
+  }
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainComponent::processAmbisonicBuffer( AudioBuffer<float> *const audioBufferToFill )
 // Audio Processing: split from getNextAudioBlock to use it for recording IR
-void MainContentComponent::processAmbisonicBuffer( AudioBuffer<float> *const audioBufferToFill )
 {
     workingBuffer.copyFrom(0, 0, audioBufferToFill->getWritePointer(0), workingBuffer.getNumSamples());
     
@@ -302,7 +310,9 @@ void MainContentComponent::processAmbisonicBuffer( AudioBuffer<float> *const aud
     
 }
 
-void MainContentComponent::fillNextAudioBlock( AudioBuffer<float> *const audioBufferToFill )
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainComponent::fillNextAudioBlock( AudioBuffer<float> *const audioBufferToFill )
 {
     
     //==========================================================================
@@ -348,8 +358,10 @@ void MainContentComponent::fillNextAudioBlock( AudioBuffer<float> *const audioBu
     }
 }
 
-// record Ambisonic buffer to disk
-void MainContentComponent::recordAmbisonicBuffer()
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainComponent::recordAmbisonicBuffer()
+// Record Ambisonic buffer to disk
 {
     if ( sourceImagesHandler.numSourceImages > 0 )
     {
@@ -369,8 +381,10 @@ void MainContentComponent::recordAmbisonicBuffer()
     audioRecorder.recordBuffer((const float **) ambisonicRecordBuffer.getArrayOfWritePointers(), ambisonicRecordBuffer.getNumChannels(), ambisonicRecordBuffer.getNumSamples());
 }
 
-// record current Room impulse Response to disk
-void MainContentComponent::recordIr()
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainComponent::recordIr()
+// Record current Room Impulse Response to disk
 {
     // estimate output buffer size (based on max delay time)
     auto maxDelaySourceImages = getMaxValue( oscHandler.getSourceImageDelays() );
@@ -445,10 +459,12 @@ void MainContentComponent::recordIr()
     isRecordingIr = false;
 }
 
-void MainContentComponent::releaseResources()
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainComponent::releaseResources()
+// This will be called when the audio device stops, or when it is being
+// restarted due to a setting change.
 {
-    // This will be called when the audio device stops, or when it is being
-    // restarted due to a setting change.
     
     audioIOComponent.transportSource.releaseResources();
     
@@ -457,12 +473,10 @@ void MainContentComponent::releaseResources()
     sourceImagesHandler.reverbTail.clear();
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
-//==============================================================================
-// ADDITIONAL AUDIO ROUTINES
-
+float MainComponent::clipOutput(float input)
 // CRUDE DEBUG PRECAUTION - clip output in [-1.0; 1.0]
-float MainContentComponent::clipOutput(float input)
 {
     if (std::abs(input) > 1.0f)
     {
@@ -473,8 +487,10 @@ float MainContentComponent::clipOutput(float input)
         return input;
 }
 
-// method called when new OSC messages are available
-void MainContentComponent::updateOnOscReceive()
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainComponent::updateOnOscReceive()
+// Method called when new OSC messages are available
 {
     // update OSC handler internals (has to happend here, to ensure that they won't be updated while
     // running the sourceImagesHandler.updateFromOscHandler method that reads them OSC internals.
@@ -493,10 +509,9 @@ void MainContentComponent::updateOnOscReceive()
     else{ sourceImageHandlerNeedsUpdate = true; }
 }
 
-//==============================================================================
-// GRAPHIC METHODS
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
-void MainContentComponent::paint (Graphics& g)
+void MainComponent::paint (Graphics& g)
 {
     // background
     g.fillAll (Colour(PixelARGB(240,30,30,30)));
@@ -515,7 +530,9 @@ void MainContentComponent::paint (Graphics& g)
     g.drawFittedText("designed by D. Poirier-Quinot, M. Noisternig, and B. F.G. Katz (2017)", getWidth() - 335, getHeight()-15, 325, 15, Justification::right, 2);
 }
 
-void MainContentComponent::resized()
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainComponent::resized()
 {
     // audio IO box
     inputLabel.setBounds(30, 3, 50, 15);
@@ -561,10 +578,9 @@ void MainContentComponent::resized()
     clippingLed.setBounds(clippingLedLabel.getX() - 12, enableLog.getY()+4, 16, 16);
 }
 
-//==============================================================================
-// LISTENER METHODS
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
-void MainContentComponent::changeListenerCallback (ChangeBroadcaster* broadcaster)
+void MainComponent::changeListenerCallback (ChangeBroadcaster* broadcaster)
 {
     if (broadcaster == &oscHandler)
     {
@@ -576,7 +592,9 @@ void MainContentComponent::changeListenerCallback (ChangeBroadcaster* broadcaste
     }
 }
 
-void MainContentComponent::buttonClicked (Button* button)
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainComponent::buttonClicked (Button* button)
 {
     if (button == &saveIrButton)
     {
@@ -623,7 +641,9 @@ void MainContentComponent::buttonClicked (Button* button)
 
 }
 
-void MainContentComponent::comboBoxChanged(ComboBox* comboBox)
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainComponent::comboBoxChanged(ComboBox* comboBox)
 {
     if (comboBox == &numFrequencyBandsComboBox)
     {
@@ -648,7 +668,9 @@ void MainContentComponent::comboBoxChanged(ComboBox* comboBox)
     }
 }
 
-void MainContentComponent::sliderValueChanged(Slider* slider)
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainComponent::sliderValueChanged(Slider* slider)
 {
     if( slider == &gainReverbTailSlider )
     {
@@ -669,6 +691,12 @@ void MainContentComponent::sliderValueChanged(Slider* slider)
     }
 }
 
-//==============================================================================
-// (This function is called by the app startup code to create our main component)
-Component* createMainContentComponent() { return new MainContentComponent(); }
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+Component* createMainContentComponent()
+{
+	return new MainComponent();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
