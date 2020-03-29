@@ -3,7 +3,8 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-LedComponent::LedComponent()
+LedComponent::LedComponent() :
+	state(State::notClipped)
 {
 	isClipped = false;
 	startTimer(timerUpdateIntervalInMs);
@@ -17,24 +18,27 @@ void LedComponent::paint(Graphics& g)
 	g.setColour(Colours::dimgrey);
 	g.drawEllipse(3.0, 7.0, 8.0, 8.0, 2.0);
 
-	// draw led if currently clipped
 	if (isClipped)
 	{
-		g.setColour(Colours::red);
-		// update next unclip time
+		isClipped = false;
+		state = State::clipped;
 		nextUnclipTime = Time::getMillisecondCounter() + ledFadeDuration;
 	}
-	else
+	else if (Time::getMillisecondCounter() >= nextUnclipTime)
 	{
-		// check if time to switch off led reached
-		if (Time::getMillisecondCounter() >= nextUnclipTime)
-		{
-			// reset clip state
-			isClipped = false;
-		}
+		state = State::notClipped;
 	}
 
-	g.fillEllipse(3.7, 7.6, 7.0, 7.0);
+	if(state == State::clipped)
+	{
+		g.setColour(Colours::red);
+		g.fillEllipse(3.7, 7.6, 7.0, 7.0);
+	}
+	else if(state == State::notClipped)
+	{
+		g.setColour(Colours::dimgrey);
+		g.fillEllipse(3.7, 7.6, 7.0, 7.0);
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

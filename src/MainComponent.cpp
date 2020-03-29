@@ -483,8 +483,8 @@ float MainComponent::clipOutput(float input)
         clippingLed.isClipped = true;
         return sign(input)*fmin(std::abs(input), 1.0f);
     }
-    else
-        return input;
+		else
+			return input;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

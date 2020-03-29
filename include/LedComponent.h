@@ -23,6 +23,9 @@ class LedComponent :
 
 	private:
 
+		enum class State {clipped, notClipped};
+		State state;
+
 		int timerUpdateIntervalInMs = 30;
 
 		// Led inertia mechanism
