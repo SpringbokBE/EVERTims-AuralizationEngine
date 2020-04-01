@@ -41,6 +41,20 @@ class AudioIOComponent :
 		void changeState(TransportState newState);
 		void changeListenerCallback(ChangeBroadcaster* broadcaster) override;
 
+		// GUI elements.
+		Label labelInput;
+
+    TextButton buttonOpenAudio,
+			buttonPlayAudio,
+			buttonStopAudio,
+			buttonSetupAudio;
+
+    ToggleButton buttonLoopAudio,
+			buttonMicInput;
+    
+		Slider sliderAudioGain,
+			sliderMicGain;
+
     bool shouldLoopAudioFile = false;
     AudioFormatManager formatManager;
     ScopedPointer<AudioFormatReaderSource> readerSource;
@@ -48,13 +62,6 @@ class AudioIOComponent :
 
     AudioBuffer<float> adcBuffer;
         
-    TextButton audioFileOpenButton;
-    TextButton audioFilePlayButton;		
-    TextButton audioFileStopButton;
-    ToggleButton audioFileLoopToggle;
-    ToggleButton adcToggle;
-    Slider gainAudioFileSlider;
-    Slider gainAdcSlider;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioIOComponent)
 

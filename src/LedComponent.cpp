@@ -15,8 +15,11 @@ LedComponent::LedComponent() :
 void LedComponent::paint(Graphics& g)
 // Paint callback associated to this component, draw source image, user head, etc.
 {
+	int w1 = (getWidth() - 10) / 2;
+	int w2 = (getWidth() - 8) / 2;
+
 	g.setColour(Colours::dimgrey);
-	g.drawEllipse(3.0, 7.0, 8.0, 8.0, 2.0);
+	g.drawEllipse(w1, w1, 10, 10, 2);
 
 	if (isClipped)
 	{
@@ -32,12 +35,12 @@ void LedComponent::paint(Graphics& g)
 	if(state == State::clipped)
 	{
 		g.setColour(Colours::red);
-		g.fillEllipse(3.7, 7.6, 7.0, 7.0);
+		g.fillEllipse(w2, w2, 8, 8);
 	}
 	else if(state == State::notClipped)
 	{
 		g.setColour(Colours::dimgrey);
-		g.fillEllipse(3.7, 7.6, 7.0, 7.0);
+		g.fillEllipse(w2, w2, 8, 8);
 	}
 }
 

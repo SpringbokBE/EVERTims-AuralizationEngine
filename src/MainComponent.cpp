@@ -7,18 +7,22 @@
 
 MainComponent::MainComponent() :
 	oscHandler(),
-	clippingLed(),
 	audioIOComponent(),
+	auralisationComponent(),
+	loggingComponent(),
 	audioRecorder(),
 	delayLine(),
 	sourceImagesHandler(),
-	ambi2binContainer()
+	ambi2binContainer(),
+	audioSetupComponent(deviceManager, 0, 256, 0, 256, false, false, false, false)
 {
-    // Set window dimensions.
-    setSize (650, 700);
-    
+	setLookAndFeel(&customLookAndFeel);
+
+		// Set window dimensions.
+		setSize(650, 700);
+
     // Specify the required number of input and output channels.
-    setAudioChannels (2, 2);
+    setAudioChannels (2, 8);
     
     // Add to change listeners.
     oscHandler.addChangeListener(this);
@@ -29,149 +33,14 @@ MainComponent::MainComponent() :
     // Initialise GUI elements.
     
     // Add GUI sub-components.
+		addAndMakeVisible(audioSetupComponent);
     addAndMakeVisible(audioIOComponent);
-    addAndMakeVisible(clippingLed);
-    clippingLed.setAlwaysOnTop(true);
+		addAndMakeVisible(auralisationComponent);
+		addAndMakeVisible(loggingComponent);
     
     // Setup logo image.
     logoImage = ImageCache::getFromMemory(BinaryData::evertims_logo_512_png, BinaryData::evertims_logo_512_pngSize);
     logoImage = logoImage.rescaled(logoImage.getWidth()/2, logoImage.getHeight()/2);
-    
-    // Initialise log text box.
-    addAndMakeVisible (logTextBox);
-    logTextBox.setMultiLine (true);
-    logTextBox.setReturnKeyStartsNewLine (true);
-    logTextBox.setReadOnly (true);
-    logTextBox.setScrollbarsShown (true);
-    logTextBox.setCaretVisible (false);
-    logTextBox.setPopupMenuEnabled (true);
-    logTextBox.setColour (TextEditor::textColourId, Colours::whitesmoke);
-    logTextBox.setColour (TextEditor::backgroundColourId, Colour(PixelARGB(200,30,30,30)));
-    logTextBox.setColour (TextEditor::outlineColourId, Colours::whitesmoke);
-    logTextBox.setColour (TextEditor::shadowColourId, Colours::darkorange);
-    
-    // Initialise text buttons.
-    buttonMap.insert({
-        { &saveIrButton, "Save RIRs to Desktop" },
-        { &saveOscButton, "Save OSC state to Desktop" },
-        { &clearSourceImageButton, "Clear" }
-    });
-    for (auto& pair : buttonMap)
-    {
-        auto& obj = pair.first;
-        const auto& param = pair.second;
-        obj->setButtonText(param);
-        obj->addListener (this);
-        obj->setEnabled (true);
-        addAndMakeVisible(obj);
-    }
-    saveIrButton.setColour (TextButton::buttonColourId, Colours::transparentBlack);
-    saveOscButton.setColour (TextButton::buttonColourId, Colour(PixelARGB(160,0,0,0)));
-    clearSourceImageButton.setColour (TextButton::buttonColourId, Colours::indianred);
-    
-    // Initialise combo boxes.
-    comboBoxMap.insert({
-        { &numFrequencyBandsComboBox, {"3", "10"} },
-        { &srcDirectivityComboBox, {"omni", "directional"} },
-    });
-    for (auto& pair : comboBoxMap)
-    {
-        auto& obj = pair.first;
-        const auto& param = pair.second;
-        addAndMakeVisible(obj);
-        obj->setEditableText(false);
-        obj->setJustificationType(Justification::right);
-        obj->setColour(ComboBox::backgroundColourId, Colour(PixelARGB(200,30,30,30)));
-        obj->setColour(ComboBox::buttonColourId, Colour(PixelARGB(200,30,30,30)));
-        obj->setColour(ComboBox::outlineColourId, Colour(PixelARGB(200,30,30,30)));
-        obj->setColour(ComboBox::textColourId, Colours::whitesmoke);
-        obj->setColour(ComboBox::arrowColourId, Colours::whitesmoke);
-        obj->addListener (this);
-        for( int i = 0; i < param.size(); i++ ){ obj->addItem(param[i], i+1); }
-        obj->setSelectedId(1);
-    }
-    
-    // Initialise sliders.
-    sliderMap.insert({
-        { &gainReverbTailSlider, { 0.0, 2.0, 1.0} }, // min, max, value
-        { &gainDirectPathSlider, { 0.0, 2.0, 1.0} },
-        { &gainEarlySlider, { 0.0, 2.0, 1.0} },
-        { &crossfadeStepSlider, { 0.001, 0.2, 0.1} }
-    });
-    for (auto& pair : sliderMap)
-    {
-        auto& obj = pair.first;
-        const auto& param = pair.second;
-        addAndMakeVisible(obj);
-        obj->setRange( param[0], param[1] );
-        obj->setValue( param[2] );
-        obj->setSliderStyle(Slider::LinearHorizontal);
-        obj->setColour(Slider::textBoxBackgroundColourId, Colours::transparentBlack);
-        obj->setColour(Slider::backgroundColourId, Colours::darkgrey);
-        obj->setColour(Slider::trackColourId, Colours::lightgrey);
-        obj->setColour(Slider::thumbColourId, Colours::white);
-        obj->setColour(Slider::textBoxTextColourId, Colours::white);
-        obj->setColour(Slider::textBoxOutlineColourId, Colours::transparentBlack);
-        obj->setTextBoxStyle(Slider::TextBoxRight, true, 70, 20);
-        obj->addListener(this);
-    }
-    crossfadeStepSlider.setSliderStyle(Slider::RotaryVerticalDrag);
-    crossfadeStepSlider.setColour(Slider::rotarySliderFillColourId, Colours::white);
-    crossfadeStepSlider.setColour(Slider::rotarySliderOutlineColourId, Colours::darkgrey);
-    crossfadeStepSlider.setTextBoxStyle(Slider::TextBoxRight, true, 50, 20);
-    crossfadeStepSlider.setRotaryParameters(10 / 8.f * 3.1416, 22 / 8.f * 3.1416, true);
-    crossfadeStepSlider.setSkewFactor(0.7);
-    
-    // Initialise labels.
-    labelMap.insert({
-        { &numFrequencyBandsLabel, "Num absorb freq bands:" },
-        { &srcDirectivityLabel, "Source directivity:" },
-        { &inputLabel, "Inputs" },
-        { &parameterLabel, "Parameters" },
-        { &logLabel, "Logs" },
-        { &directPathLabel, "Direct path" },
-        { &earlyLabel, "Early reflections" },
-        { &crossfadeLabel, "Crossfade factor" },
-        { &clippingLedLabel, "clip" }
-    });
-    for (auto& pair : labelMap)
-    {
-        auto& obj = pair.first;
-        const auto& param = pair.second;
-        addAndMakeVisible(obj);
-        obj->setText( param, dontSendNotification );
-        obj->setColour(Label::textColourId, Colours::whitesmoke);
-        
-    }
-    inputLabel.setColour(Label::backgroundColourId, Colour(30, 30, 30));
-    parameterLabel.setColour(Label::backgroundColourId, Colour(30, 30, 30));
-    logLabel.setColour(Label::backgroundColourId, Colour(30, 30, 30));
-    
-    // Initialise toggles.
-    toggleMap.insert({
-        { &reverbTailToggle, "Reverb tail" },
-        { &enableDirectToBinaural, "Direct to binaural" },
-        { &enableLog, "Enable logs" },
-        { &enableRecord, "Record Ambisonic to disk" }
-    });
-    for (auto& pair : toggleMap)
-    {
-        auto& obj = pair.first;
-        const auto& param = pair.second;
-        addAndMakeVisible(obj);
-        obj->setButtonText( param );
-        obj->setColour(ToggleButton::textColourId, Colours::whitesmoke);
-        obj->setEnabled(true);
-        obj->addListener(this);
-        if( obj != &enableRecord ){
-            obj->setToggleState(true, juce::sendNotification);
-        }
-    }
-    
-    // Disable direct to binaural until fixed
-    // enableDirectToBinaural.setEnabled(false);
-    enableDirectToBinaural.setToggleState(false, juce::sendNotification);
-    enableRecord.setToggleState(false, juce::sendNotification);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -480,7 +349,7 @@ float MainComponent::clipOutput(float input)
 {
     if (std::abs(input) > 1.0f)
     {
-        clippingLed.isClipped = true;
+        loggingComponent.ledClipping.isClipped = true;
         return sign(input)*fmin(std::abs(input), 1.0f);
     }
 		else
@@ -513,69 +382,33 @@ void MainComponent::updateOnOscReceive()
 
 void MainComponent::paint (Graphics& g)
 {
+	g.fillAll(CustomLookAndFeel::backgroundColour);
     // background
-    g.fillAll (Colour(PixelARGB(240,30,30,30)));
-    
+    //g.fillAll(Colours::grey);
     // parameters box
     // g.setOpacity(1.0f);
-    g.setColour(Colours::white);
-    g.drawRect(10.f, 155.f, getWidth()-20.f, 150.f);
-    
-    // logo image
-    g.drawImageAt(logoImage, (int)( (getWidth()/2) - (logoImage.getWidth()/2) ), 380);
-    
-    // signature
-    g.setColour(Colours::white);
-    g.setFont(11.f);
-    g.drawFittedText("designed by D. Poirier-Quinot, M. Noisternig, and B. F.G. Katz (2017)", getWidth() - 335, getHeight()-15, 325, 15, Justification::right, 2);
+    //g.setColour(Colours::white);
+    //g.drawRect(10.f, 155.f, getWidth()-20.f, 150.f);
+    //
+    //// logo image
+    //g.drawImageAt(logoImage, (int)( (getWidth()/2) - (logoImage.getWidth()/2) ), 380);
+    //
+    //// signature
+    //g.setColour(Colours::white);
+    //g.setFont(11.f);
+    //g.drawFittedText("designed by D. Poirier-Quinot, M. Noisternig, and B. F.G. Katz (2017)", getWidth() - 335, getHeight()-15, 325, 15, Justification::right, 2);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 void MainComponent::resized()
 {
-    // audio IO box
-    inputLabel.setBounds(30, 3, 50, 15);
-    audioIOComponent.setBounds(10, 10, getWidth()-20, 130);
-    
-    // parameters box
-    int thirdWidthIoComponent = (int)((getWidth() - 20)/ 3) - 20; // lazy to change all to add that to audioIOComponent GUI for now
-    
-    parameterLabel.setBounds(30, 147, 80, 15);
-    
-    directPathLabel.setBounds(30, 170, 120, 20);
-    gainDirectPathSlider.setBounds (140, 170, getWidth() - 320, 20);
-    enableDirectToBinaural.setBounds ( getWidth() - 170, 170, 140, 20);
+	int h = getHeight() / 5;
+	int w = getWidth();
 
-    earlyLabel.setBounds(30, 200, 120, 20);
-    gainEarlySlider.setBounds (180, 200, getWidth() - 270, 20);
-
-    reverbTailToggle.setBounds(30, 230, 120, 20);
-    gainReverbTailSlider.setBounds (180, 230, getWidth() - 270, 20);
-
-    clearSourceImageButton.setBounds(getWidth() - 80, 200, 50, 50);
-    
-    saveIrButton.setBounds(getWidth() - thirdWidthIoComponent - 30, 265, thirdWidthIoComponent, 30);
-    saveOscButton.setBounds(getWidth() - thirdWidthIoComponent - 15, getHeight() - 55, thirdWidthIoComponent, 30);
-    
-    crossfadeStepSlider.setBounds(0.16*getWidth(), 255, 90, 50);
-    crossfadeLabel.setBounds(30, 258, crossfadeStepSlider.getX() - 30, 40);
-    
-    numFrequencyBandsLabel.setBounds(190, 260, getWidth() - 450, 20);
-    numFrequencyBandsComboBox.setBounds(saveIrButton.getX()- 70, 260, 70, 20);
-    
-    srcDirectivityLabel.setBounds(190, 280, getWidth() - 450, 20);
-    srcDirectivityComboBox.setBounds(saveIrButton.getX() - 110, 280, 110, 20);
-    
-    // log box
-    logLabel.setBounds(30, 309, 40, 20);
-    logTextBox.setBounds (8, 320, getWidth() - 16, getHeight() - 336);
-    enableLog.setBounds(getWidth() - 120, 320, 100, 30);
-    enableRecord.setBounds(getWidth() - 200, 350, 180, 30);
-    
-    // clipping led
-    clippingLedLabel.setBounds(enableLog.getX() - 50, enableLog.getY()+7, 34, 14);
-    clippingLed.setBounds(clippingLedLabel.getX() - 12, enableLog.getY()+4, 16, 16);
+	audioIOComponent.setBounds(0, 0, w, h);
+	auralisationComponent.setBounds(0, h, w, 2 * h);
+	loggingComponent.setBounds(0, 3 * h, w, 2 * h);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -584,110 +417,8 @@ void MainComponent::changeListenerCallback (ChangeBroadcaster* broadcaster)
 {
     if (broadcaster == &oscHandler)
     {
-        if( enableLog.getToggleState() )
-        {
-            logTextBox.setText(oscHandler.getMapContentForGUI());
-        }
+				loggingComponent.updateLoggingText(oscHandler.getMapContentForGUI());
         updateOnOscReceive();
-    }
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
-void MainComponent::buttonClicked (Button* button)
-{
-    if (button == &saveIrButton)
-    {
-        if ( sourceImagesHandler.numSourceImages > 0 )
-        {
-            isRecordingIr = true;
-            recordIr();
-        }
-        else {
-            AlertWindow::showMessageBoxAsync ( AlertWindow::NoIcon, "Impulse Response not saved", "No source images registered from raytracing client \n(Empty IR)", "OK");
-        }
-    }
-    if (button == &saveOscButton)
-    {
-        String output = oscHandler.getMapContentForLog();
-        saveStringToDesktop("EVERTims_state", output);
-    }
-    if( button == &reverbTailToggle )
-    {
-        sourceImagesHandler.enableReverbTail = reverbTailToggle.getToggleState();
-        updateOnOscReceive(); // require delay line size update
-        gainReverbTailSlider.setEnabled(reverbTailToggle.getToggleState());
-    }
-    if( button == &enableDirectToBinaural )
-    {
-        sourceImagesHandler.enableDirectToBinaural = enableDirectToBinaural.getToggleState();
-    }
-    if( button == &enableLog )
-    {
-        if( button->getToggleState() ){ logTextBox.setText(oscHandler.getMapContentForGUI()); }
-        else{ logTextBox.setText( String("") ); };
-    }
-    if( button == &enableRecord )
-    {
-        if( button->getToggleState() ){ audioRecorder.startRecording(); }
-        else{ audioRecorder.stopRecording(); };
-    }
-    if( button == &clearSourceImageButton )
-    {
-        oscHandler.clear(false);
-        updateOnOscReceive();
-        logTextBox.setText(oscHandler.getMapContentForGUI());
-    }
-
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
-void MainComponent::comboBoxChanged(ComboBox* comboBox)
-{
-    if (comboBox == &numFrequencyBandsComboBox)
-    {
-        // update locals
-        if( numFrequencyBandsComboBox.getSelectedId() == 1 ) numFreqBands = 3;
-        else numFreqBands = 10;
-        
-        // flag update required in audio loop (to avoid multi-thread access issues)
-        updateNumFreqBandrequired = true;
-    }
-    if (comboBox == &srcDirectivityComboBox)
-    {
-        // load new file
-        string filename;
-        if( comboBox->getSelectedId() == 1 ) filename = "directivity/omni.sofa";
-        else filename = "directivity/directional.sofa";
-        const char *fileChar = filename.c_str();
-        sourceImagesHandler.directivityHandler.loadFile( fileChar );
-        
-        // update 
-        updateOnOscReceive();
-    }
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
-void MainComponent::sliderValueChanged(Slider* slider)
-{
-    if( slider == &gainReverbTailSlider )
-    {
-        sourceImagesHandler.reverbTailGain = gainReverbTailSlider.getValue();
-    }
-    if( slider == &gainDirectPathSlider )
-    {
-        sourceImagesHandler.directPathGain = gainDirectPathSlider.getValue();
-    }
-    if( slider == &gainEarlySlider )
-    {
-        sourceImagesHandler.earlyGain = slider->getValue();
-    }
-    if( slider == &crossfadeStepSlider )
-    {
-        sourceImagesHandler.crossfadeStep = slider->getValue();
-        sourceImagesHandler.binauralEncoder.crossfadeStep = slider->getValue();
     }
 }
 
@@ -696,6 +427,119 @@ void MainComponent::sliderValueChanged(Slider* slider)
 Component* createMainContentComponent()
 {
 	return new MainComponent();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainComponent::enableReverbTail(bool enable)
+{
+	sourceImagesHandler.enableReverbTail = enable;
+	updateOnOscReceive(); // Enabling reverb requires an update of the delay line size.
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainComponent::enableDirectToBinaural(bool enable)
+{
+	sourceImagesHandler.enableDirectToBinaural = enable;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainComponent::saveRIR()
+{
+	if (sourceImagesHandler.numSourceImages > 0)
+	{
+		isRecordingIr = true;
+		recordIr();
+	}
+	else
+	{
+		AlertWindow::showMessageBoxAsync(AlertWindow::NoIcon, "Room Impulse Response (RIR) not saved!",
+		 	"No source images registered from Raytracing Client!\n(Empty RIR)", "OK");
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainComponent::clearSourceImage()
+{
+	oscHandler.clear(false);
+	changeListenerCallback(&oscHandler);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainComponent::updateNumFrequencyBands(int value)
+{
+	numFreqBands = value;
+	updateNumFreqBandrequired = true; // Update flag for multi-threaded update.
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainComponent::updateSourceDirectivity(String value)
+{
+	String filename;
+	filename << "directivity/" << value << ".sofa";
+	
+	sourceImagesHandler.directivityHandler.loadFile(filename);
+	updateOnOscReceive();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainComponent::updateDirectPathGain(double value)
+{
+	sourceImagesHandler.directPathGain = value;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainComponent::updateEarlyReflectionsGain(double value)
+{
+	sourceImagesHandler.earlyGain = value;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainComponent::updateReverbTailGain(double value)
+{
+	sourceImagesHandler.reverbTailGain = value;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainComponent::updateCrossfadeFactor(double value)
+{
+	sourceImagesHandler.crossfadeStep = value;
+	sourceImagesHandler.binauralEncoder.crossfadeStep = value;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+String MainComponent::getLogs(bool enable)
+{
+	if (enable) return String("");
+	return oscHandler.getMapContentForGUI();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainComponent::enableRecordAmbisonicToDisk(bool enable)
+{
+	if (enable)
+		audioRecorder.startRecording();
+	else
+		audioRecorder.stopRecording();
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MainComponent::saveOscState()
+{
+	String output = oscHandler.getMapContentForLog();
+	saveStringToDesktop("EVERTims_state", output);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

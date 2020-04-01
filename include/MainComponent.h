@@ -14,23 +14,24 @@
 #include "Utils.h"
 #include "DelayLine.h"
 #include "SourceImagesHandler.h"
-#include "LedComponent.h"
+#include "AuralisationComponent.h"
+#include "LoggingComponent.h"
+
+#include "CustomLookAndFeel.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 class MainComponent :
 	public AudioAppComponent,
-	public Button::Listener,
-	public ComboBox::Listener,
-	public ChangeListener,
-	public Slider::Listener
+	public ChangeListener
 {
 	public:
-    
+
 		MainComponent();
 		~MainComponent();
     
+		// AudioAppComponent overrides.
 		void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override;
 		void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override;
 		void releaseResources() override;
@@ -43,15 +44,27 @@ class MainComponent :
 		void paint (Graphics& g) override;
 		void resized() override;
     
-		void buttonClicked (Button* button) override;
-		void comboBoxChanged(ComboBox* comboBox) override;
-		void sliderValueChanged(Slider* slider) override;
-
 		// Output clipping
 		bool isClipped = false;
     
+		void enableReverbTail(bool enable);
+		void enableDirectToBinaural(bool enable);
+		void saveRIR();
+		void clearSourceImage();
+		void updateNumFrequencyBands(int value);
+		void updateSourceDirectivity(String value);
+		void updateDirectPathGain(double value);
+		void updateEarlyReflectionsGain(double value);
+		void updateReverbTailGain(double value);
+		void updateCrossfadeFactor(double value);
+		String getLogs(bool enable);
+		void enableRecordAmbisonicToDisk(bool enable);
+		void saveOscState();
+
+		AudioDeviceSelectorComponent audioSetupComponent;
+
 private:
-    
+
     void changeListenerCallback (ChangeBroadcaster* source) override;
     void updateOnOscReceive();
     float clipOutput(float input);
@@ -63,31 +76,10 @@ private:
     bool isRecordingIr = false;
     
     // GUI elements.
-    TextButton saveIrButton;
-    TextButton clearSourceImageButton;
-    TextButton saveOscButton;
-    TextEditor logTextBox;
     Image logoImage;
-    ComboBox numFrequencyBandsComboBox;
-    Label numFrequencyBandsLabel;
-    ComboBox srcDirectivityComboBox;
-    Label srcDirectivityLabel;
-    ToggleButton reverbTailToggle;
-    ToggleButton enableDirectToBinaural;
-    ToggleButton enableLog;
-    ToggleButton enableRecord;
-    Slider gainReverbTailSlider;
-    Slider gainDirectPathSlider;
-    Slider gainEarlySlider;
-    Slider crossfadeStepSlider;
-    Label inputLabel;
-    Label parameterLabel;
-    Label directPathLabel;
-    Label earlyLabel;
-    Label logLabel;
-    Label crossfadeLabel;
-    LedComponent clippingLed;
-    Label clippingLedLabel;
+		AuralisationComponent auralisationComponent;
+		LoggingComponent loggingComponent;
+		CustomLookAndFeel customLookAndFeel;
     
     std::unordered_map<Button*, std::string> buttonMap;
     std::unordered_map<ComboBox*, Array< std::string > > comboBoxMap;
@@ -112,7 +104,7 @@ private:
     // Delay line
     DelayLine delayLine;
     bool requireDelayLineSizeUpdate = false;
-    
+   
     // Sources images
     SourceImagesHandler sourceImagesHandler;
     bool sourceImageHandlerNeedsUpdate = false;

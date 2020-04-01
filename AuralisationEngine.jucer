@@ -6,6 +6,12 @@
               splashScreenColour="Dark" cppLanguageStandard="11" companyCopyright="">
   <MAINGROUP id="aSpPbd" name="AuralisationEngine">
     <GROUP id="{C89C0747-CED7-902E-BDD8-0E88F14BEAEB}" name="include">
+      <FILE id="jBHv8w" name="LoggingComponent.h" compile="0" resource="0"
+            file="include/LoggingComponent.h"/>
+      <FILE id="xjhtZ4" name="AuralisationComponent.h" compile="0" resource="0"
+            file="include/AuralisationComponent.h"/>
+      <FILE id="I5PAgD" name="CustomLookAndFeel.h" compile="0" resource="0"
+            file="include/CustomLookAndFeel.h"/>
       <FILE id="sSNWxe" name="Ambi2binIRContainer.h" compile="0" resource="0"
             file="include/Ambi2binIRContainer.h"/>
       <FILE id="VFZ1PG" name="AudioIOComponent.h" compile="0" resource="0"
@@ -65,14 +71,20 @@
             file="src/AudioIOComponent.cpp"/>
       <FILE id="uSfm2S" name="AudioRecorder.cpp" compile="1" resource="0"
             file="src/AudioRecorder.cpp"/>
+      <FILE id="GoghBG" name="AuralisationComponent.cpp" compile="1" resource="0"
+            file="src/AuralisationComponent.cpp"/>
       <FILE id="C6VS88" name="BinauralEncoder.cpp" compile="1" resource="0"
             file="src/BinauralEncoder.cpp"/>
+      <FILE id="T3HU5t" name="CustomLookAndFeel.cpp" compile="1" resource="0"
+            file="src/CustomLookAndFeel.cpp"/>
       <FILE id="hS2WBx" name="DelayLine.cpp" compile="1" resource="0" file="src/DelayLine.cpp"/>
       <FILE id="mtq9EQ" name="DirectivityHandler.cpp" compile="1" resource="0"
             file="src/DirectivityHandler.cpp"/>
       <FILE id="C6HXgt" name="FilterBank.cpp" compile="1" resource="0" file="src/FilterBank.cpp"/>
       <FILE id="VlMN2t" name="LedComponent.cpp" compile="1" resource="0"
             file="src/LedComponent.cpp"/>
+      <FILE id="gelALp" name="LoggingComponent.cpp" compile="1" resource="0"
+            file="src/LoggingComponent.cpp"/>
       <FILE id="WOmEyi" name="Main.cpp" compile="1" resource="0" file="src/Main.cpp"/>
       <FILE id="l9hY4R" name="MainComponent.cpp" compile="1" resource="0"
             file="src/MainComponent.cpp"/>
@@ -156,7 +168,7 @@
     <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0"/>
     <MODULE id="juce_osc" showAllCode="1" useLocalCopy="0"/>
   </MODULES>
-  <JUCEOPTIONS JUCE_ASIO="0" JUCE_DIRECTSOUND="1"/>
+  <JUCEOPTIONS JUCE_ASIO="1" JUCE_DIRECTSOUND="1"/>
   <LIVE_SETTINGS>
     <OSX headerPath="" systemHeaderPath="./libs/eigen-eigen-7403112d5871&#10;/usr/local/include"/>
     <WINDOWS/>

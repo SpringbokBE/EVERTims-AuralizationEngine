@@ -1,74 +1,67 @@
-#include "Utils.h"
-
 #include "AudioIOComponent.h"
+#include "MainComponent.h"
+#include "Utils.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 AudioIOComponent::AudioIOComponent()
 {
-	// INIT AUDIO READER ELEMENTS
+	// Initialise audio reader elements.
 	formatManager.registerBasicFormats();
 	transportSource.addChangeListener(this);
 
-	// INIT GUI ELEMENTS
-	addAndMakeVisible(&audioFileOpenButton);
-	audioFileOpenButton.setButtonText("OPEN...");
-	audioFileOpenButton.addListener(this);
-	audioFileOpenButton.setColour(TextButton::buttonColourId, Colours::darkgrey);
+	// Initialise GUI elements.
+	addAndMakeVisible(&labelInput);
+	labelInput.setText("Input", dontSendNotification);
 
-	addAndMakeVisible(&audioFilePlayButton);
-	audioFilePlayButton.setButtonText("PLAY");
-	audioFilePlayButton.addListener(this);
-	audioFilePlayButton.setColour(TextButton::buttonColourId, Colours::seagreen);
-	audioFilePlayButton.setEnabled(false);
+	addAndMakeVisible(&buttonOpenAudio);
+	buttonOpenAudio.addListener(this);
+	buttonOpenAudio.setButtonText("OPEN");
+	buttonOpenAudio.setColour(TextButton::buttonColourId, Colours::darkgrey);
 
-	addAndMakeVisible(&audioFileStopButton);
-	audioFileStopButton.setButtonText("STOP");
-	audioFileStopButton.addListener(this);
-	audioFileStopButton.setColour(TextButton::buttonColourId, Colours::indianred);
-	audioFileStopButton.setEnabled(false);
+	addAndMakeVisible(&buttonPlayAudio);
+	buttonPlayAudio.addListener(this);
+	buttonPlayAudio.setButtonText("PLAY");
+	buttonPlayAudio.setColour(TextButton::buttonColourId, Colours::seagreen);
+	buttonPlayAudio.setEnabled(false);
 
-	addAndMakeVisible(&gainAudioFileSlider);
-	gainAudioFileSlider.setRange(0.0, 4.0);
-	gainAudioFileSlider.setValue(1.0);
-	gainAudioFileSlider.setSliderStyle(Slider::LinearHorizontal);
-	gainAudioFileSlider.setColour(Slider::textBoxBackgroundColourId, Colours::transparentBlack);
-	gainAudioFileSlider.setColour(Slider::textBoxTextColourId, Colours::white);
-	gainAudioFileSlider.setColour(Slider::textBoxOutlineColourId, Colours::transparentBlack);
-	gainAudioFileSlider.setTextBoxStyle(Slider::TextBoxRight, true, 70, 20);
-	gainAudioFileSlider.setColour(Slider::backgroundColourId, Colours::darkgrey);
-	gainAudioFileSlider.setColour(Slider::trackColourId, Colours::lightgrey);
-	gainAudioFileSlider.setColour(Slider::thumbColourId, Colours::white);
+	addAndMakeVisible(&buttonStopAudio);
+	buttonStopAudio.addListener(this);
+	buttonStopAudio.setButtonText("STOP");
+	buttonStopAudio.setColour(TextButton::buttonColourId, Colours::indianred);
+	buttonStopAudio.setEnabled(false);
 
-	addAndMakeVisible(&gainAdcSlider);
-	gainAdcSlider.setRange(0.0, 2.0);
-	gainAdcSlider.setValue(1.0);
-	gainAdcSlider.setSliderStyle(Slider::LinearHorizontal);
-	gainAdcSlider.setColour(Slider::textBoxBackgroundColourId, Colours::transparentBlack);
-	gainAdcSlider.setColour(Slider::textBoxTextColourId, Colours::white);
-	gainAdcSlider.setColour(Slider::textBoxOutlineColourId, Colours::transparentBlack);
-	gainAdcSlider.setTextBoxStyle(Slider::TextBoxRight, true, 70, 20);
-	gainAdcSlider.setColour(Slider::backgroundColourId, Colours::darkgrey);
-	gainAdcSlider.setColour(Slider::trackColourId, Colours::lightgrey);
-	gainAdcSlider.setColour(Slider::thumbColourId, Colours::white);
+	addAndMakeVisible(&buttonSetupAudio);
+	buttonSetupAudio.addListener(this);
+	buttonSetupAudio.setButtonText("SETUP");
 
-	addAndMakeVisible(&audioFileLoopToggle);
-	audioFileLoopToggle.setButtonText("Loop");
-	audioFileLoopToggle.setColour(ToggleButton::textColourId, Colours::whitesmoke);
-	audioFileLoopToggle.setEnabled(true);
-	audioFileLoopToggle.addListener(this);
+	addAndMakeVisible(&sliderAudioGain);
+	sliderAudioGain.setRange(0.0, 4.0);
+	sliderAudioGain.setValue(1.0);
+	sliderAudioGain.setSliderStyle(Slider::LinearHorizontal);
+	sliderAudioGain.setTextBoxStyle(Slider::TextBoxRight, true, 70, 20);
 
-	addAndMakeVisible(&adcToggle);
-	adcToggle.setButtonText("Micro Input");
-	adcToggle.setColour(ToggleButton::textColourId, Colours::whitesmoke);
-	adcToggle.setEnabled(true);
-	adcToggle.addListener(this);
+	addAndMakeVisible(&sliderMicGain);
+	sliderMicGain.setRange(0.0, 2.0);
+	sliderMicGain.setValue(1.0);
+	sliderMicGain.setSliderStyle(Slider::LinearHorizontal);
+	sliderMicGain.setTextBoxStyle(Slider::TextBoxRight, true, 70, 20);
 
-	// open audio file "impulse" at startup
+	addAndMakeVisible(&buttonLoopAudio);
+	buttonLoopAudio.addListener(this);
+	buttonLoopAudio.setButtonText("Loop audio");
+	buttonLoopAudio.setEnabled(true); // Is this required?
+
+	addAndMakeVisible(&buttonMicInput);
+	buttonMicInput.addListener(this);
+	buttonMicInput.setButtonText("Mic input");
+	buttonMicInput.setEnabled(true); // Is this required?
+
+	// Open audio file "impulse" at startup
 	File audioFile = getFileFromString("sounds/impulse.wav");
 	bool fileOpenedSucess = loadAudioFile(audioFile);
-	audioFilePlayButton.setEnabled(fileOpenedSucess);
+	buttonPlayAudio.setEnabled(fileOpenedSucess);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -137,14 +130,14 @@ void AudioIOComponent::getNextAudioBlock(const AudioSourceChannelInfo& bufferToF
 		bufferToFill.buffer->addFrom(0, 0, bufferToFill.buffer->getWritePointer(1), bufferToFill.buffer->getNumSamples());
 
 		// apply gain
-		bufferToFill.buffer->applyGain(gainAudioFileSlider.getValue());
+		bufferToFill.buffer->applyGain(sliderAudioGain.getValue());
 	}
 
 	// copy adc inputs (stored in adcBuffer) to output
-	if (adcToggle.getToggleState())
+	if (buttonMicInput.getToggleState())
 	{
 		// apply gain
-		adcBuffer.applyGain(gainAdcSlider.getValue());
+		adcBuffer.applyGain(sliderMicGain.getValue());
 		// add to output
 		bufferToFill.buffer->addFrom(0, 0, adcBuffer, 0, 0, bufferToFill.buffer->getNumSamples());
 	}
@@ -219,64 +212,43 @@ void AudioIOComponent::audioDeviceIOCallback(const float** inputChannelData, int
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-void AudioIOComponent::paint(Graphics& g)
-{
-	float w = static_cast<float>(getWidth());
-	float h = static_cast<float>(getHeight());
-
-	g.setOpacity(1.0f);
-	g.setColour(Colours::whitesmoke);
-	g.drawRoundedRectangle(0.f, 0.f, w, h, 0.0f, 2.0f);
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
-void AudioIOComponent::resized()
-{
-	auto pos = getPosition();
-
-	int thirdWidth = (int)(getWidth() / 3) - 20;
-	audioFileOpenButton.setBounds(pos.getX() + 10, pos.getY() + 10, thirdWidth, 40);
-	audioFilePlayButton.setBounds(30 + thirdWidth, pos.getY() + 10, thirdWidth, 40);
-	audioFileStopButton.setBounds(40 + 2 * thirdWidth, pos.getY() + 10, thirdWidth, 40);
-
-	audioFileLoopToggle.setBounds(pos.getX() + 10, pos.getY() + 60, 60, 20);
-	gainAudioFileSlider.setBounds(pos.getX() + 160, audioFileLoopToggle.getY(), getWidth() - 190, 20);
-
-	adcToggle.setBounds(pos.getX() + 10, pos.getY() + 90, 120, 20);
-	gainAdcSlider.setBounds(pos.getX() + 160, adcToggle.getY(), getWidth() - 190, 20);
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
 void AudioIOComponent::buttonClicked(Button* button)
 {
-	if (button == &audioFileOpenButton)
+	if (button == &buttonOpenAudio)
 	{
 		bool fileOpenedSucess = openAudioFile();
-		audioFilePlayButton.setEnabled(fileOpenedSucess);
+		buttonPlayAudio.setEnabled(fileOpenedSucess);
 	}
 
-	if (button == &audioFilePlayButton)
+	if (button == &buttonPlayAudio)
 	{
 		if (readerSource != nullptr)
 		{
-			readerSource->setLooping(audioFileLoopToggle.getToggleState());
+			readerSource->setLooping(buttonLoopAudio.getToggleState());
 		}
 		changeState(Starting);
 	}
 
-	if (button == &audioFileStopButton)
+	if (button == &buttonStopAudio)
 	{
 		changeState(Stopping);
 	}
 
-	if (button == &audioFileLoopToggle)
+	if (button == &buttonLoopAudio)
 	{
 		if (readerSource != nullptr)
 		{
-			readerSource->setLooping(audioFileLoopToggle.getToggleState());
+			readerSource->setLooping(buttonLoopAudio.getToggleState());
 		}
+	}
+
+	else if (button == &buttonSetupAudio)
+	{
+		auto parent = dynamic_cast<MainComponent*>(getParentComponent());
+
+		parent->audioSetupComponent.setSize(400, 500);
+		parent->audioSetupComponent.setCentrePosition(200, 250);
+		DialogWindow::showDialog("Audio setup", &parent->audioSetupComponent, this, CustomLookAndFeel::backgroundColour, true);
 	}
 }
 
@@ -291,8 +263,8 @@ void AudioIOComponent::changeState(TransportState newState)
 		switch (audioPlayerState)
 		{
 		case Stopped:
-			audioFileStopButton.setEnabled(false);
-			audioFilePlayButton.setEnabled(true);
+			buttonStopAudio.setEnabled(false);
+			buttonPlayAudio.setEnabled(true);
 			transportSource.setPosition(0.0);
 			break;
 
@@ -300,12 +272,12 @@ void AudioIOComponent::changeState(TransportState newState)
 			break;
 
 		case Starting:
-			audioFilePlayButton.setEnabled(false);
+			buttonPlayAudio.setEnabled(false);
 			transportSource.start();
 			break;
 
 		case Playing:
-			audioFileStopButton.setEnabled(true);
+			buttonStopAudio.setEnabled(true);
 			break;
 
 		case Stopping:
@@ -329,6 +301,35 @@ void AudioIOComponent::changeListenerCallback(ChangeBroadcaster* broadcaster)
 				changeState(Stopped);
 		}
 	}
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void AudioIOComponent::paint(Graphics& g)
+{
+	g.setColour(Colours::white);
+	g.drawRoundedRectangle(10, 10, getWidth() - 20, getHeight() - 20,
+		getParentComponent()->getHeight() / 100, 2.0);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+void AudioIOComponent::resized()
+{
+	int h = (getHeight() - 40) / 3;
+	int w = (getWidth() - 40) / 20;
+
+	Font labelFont = labelInput.getFont();
+	labelInput.setBounds(30, 5, 1.2 * labelFont.getStringWidth(labelInput.getText()), labelFont.getHeight());
+
+	buttonOpenAudio.setBounds(pad(20, 20, 5 * w, h, 2));
+	buttonPlayAudio.setBounds(pad(20 + 5 * w, 20, 5 * w, h, 2));
+	buttonStopAudio.setBounds(pad(20 + 10 * w, 20, 5 * w, h, 2));
+	buttonSetupAudio.setBounds(pad(20 + 15 * w, 20, 5 * w, h, 2));
+	buttonLoopAudio.setBounds(20, 30 + h, 4 * w, h);
+	buttonMicInput.setBounds(20, 30 + 2 * h, 4 * w, h);
+	sliderAudioGain.setBounds(20 + 4 * w, 30 + h, 16 * w, h);
+	sliderMicGain.setBounds(20 + 4 * w, 30 + 2 * h, 16 * w, h);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

@@ -16,7 +16,7 @@ class SourceImagesHandler
 {
 	public:
     
-		SourceImagesHandler(){};
+		SourceImagesHandler() {};
 		~SourceImagesHandler(){};
 
 		void prepareToPlay(const unsigned int samplesPerBlockExpected, const double sampleRate);
@@ -34,13 +34,13 @@ class SourceImagesHandler
     
 		// Reverb tail
 		ReverbTail reverbTail;
-		bool enableReverbTail;
+		bool enableReverbTail = true;
 		float reverbTailGain = 1.0f;
     
 		// Direct path to binaural
 		int directPathId = -1;
 		float directPathGain = 1.0f;
-		bool enableDirectToBinaural = true;
+		bool enableDirectToBinaural = false;
     
 		// Crossfade mechanism
 		float crossfadeStep = 0.1f;
