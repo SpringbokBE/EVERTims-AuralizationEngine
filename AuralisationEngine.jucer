@@ -6,6 +6,30 @@
               splashScreenColour="Dark" cppLanguageStandard="11" companyCopyright="">
   <MAINGROUP id="aSpPbd" name="AuralisationEngine">
     <GROUP id="{C89C0747-CED7-902E-BDD8-0E88F14BEAEB}" name="include">
+      <GROUP id="{431F29E9-255E-0636-E61D-5B7780386FBF}" name="ff_meters">
+        <FILE id="sYvjEM" name="Doxyfile" compile="0" resource="1" file="include/ff_meters/Doxyfile"/>
+        <FILE id="ORlTwB" name="ff_meters.h" compile="0" resource="0" file="include/ff_meters/ff_meters.h"/>
+        <FILE id="NIskWV" name="ff_meters_LevelMeter.cpp" compile="1" resource="0"
+              file="include/ff_meters/ff_meters_LevelMeter.cpp"/>
+        <FILE id="w6mDDv" name="ff_meters_LevelMeter.h" compile="0" resource="0"
+              file="include/ff_meters/ff_meters_LevelMeter.h"/>
+        <FILE id="p675rj" name="ff_meters_LevelMeterSource.h" compile="0" resource="0"
+              file="include/ff_meters/ff_meters_LevelMeterSource.h"/>
+        <FILE id="GsMpuK" name="ff_meters_LookAndFeel.h" compile="0" resource="0"
+              file="include/ff_meters/ff_meters_LookAndFeel.h"/>
+        <FILE id="gXqCKp" name="ff_meters_LookAndFeelMethods.h" compile="0"
+              resource="0" file="include/ff_meters/ff_meters_LookAndFeelMethods.h"/>
+        <FILE id="PcdZcH" name="ff_meters_OutlineBuffer.h" compile="0" resource="0"
+              file="include/ff_meters/ff_meters_OutlineBuffer.h"/>
+        <FILE id="UZVfEb" name="ff_meters_SoundFieldLookAndFeelMethods.h" compile="0"
+              resource="0" file="include/ff_meters/ff_meters_SoundFieldLookAndFeelMethods.h"/>
+        <FILE id="phW5Qd" name="ff_meters_StereoFieldBuffer.h" compile="0"
+              resource="0" file="include/ff_meters/ff_meters_StereoFieldBuffer.h"/>
+        <FILE id="NYSYYy" name="ff_meters_StereoFieldComponent.h" compile="0"
+              resource="0" file="include/ff_meters/ff_meters_StereoFieldComponent.h"/>
+        <FILE id="hX6V8g" name="LICENSE.md" compile="0" resource="1" file="include/ff_meters/LICENSE.md"/>
+        <FILE id="yy2dtR" name="README.md" compile="0" resource="1" file="include/ff_meters/README.md"/>
+      </GROUP>
       <FILE id="jBHv8w" name="LoggingComponent.h" compile="0" resource="0"
             file="include/LoggingComponent.h"/>
       <FILE id="xjhtZ4" name="AuralisationComponent.h" compile="0" resource="0"

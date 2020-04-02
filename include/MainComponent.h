@@ -19,6 +19,8 @@
 
 #include "CustomLookAndFeel.h"
 
+#include "../ff_meters/ff_meters.h"
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -64,7 +66,7 @@ class MainComponent :
 		AudioDeviceSelectorComponent audioSetupComponent;
 
 private:
-
+		
     void changeListenerCallback (ChangeBroadcaster* source) override;
     void updateOnOscReceive();
     float clipOutput(float input);
@@ -80,7 +82,11 @@ private:
 		AuralisationComponent auralisationComponent;
 		LoggingComponent loggingComponent;
 		CustomLookAndFeel customLookAndFeel;
-    
+
+		foleys::LevelMeter levelMeterComponent;
+		foleys::LevelMeterSource levelMeterSource;
+		foleys::LevelMeterLookAndFeel levelMeterLnf;
+
     std::unordered_map<Button*, std::string> buttonMap;
     std::unordered_map<ComboBox*, Array< std::string > > comboBoxMap;
     std::unordered_map<Slider*, Array< double > > sliderMap;

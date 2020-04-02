@@ -2,17 +2,23 @@
 #define CUSTOMLOOKANDFEEL_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "../ff_meters/ff_meters.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 class CustomLookAndFeel :
-	public LookAndFeel_V4
+	public LookAndFeel_V4,
+	public foleys::LevelMeter::LookAndFeelMethods
 {
 	public:
 
+		#include "../ff_meters/ff_meters_LookAndFeelMethods.h"
+
+	public:
+	
 		CustomLookAndFeel();
-			~CustomLookAndFeel() {};
+		~CustomLookAndFeel() {};
 
 		static const Colour backgroundColour;
 		static const Colour foregroundColour;

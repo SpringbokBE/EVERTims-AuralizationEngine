@@ -12,6 +12,7 @@ const Colour CustomLookAndFeel::accentColour = Colours::transparentBlack;
 
 CustomLookAndFeel::CustomLookAndFeel()
 {
+	setupDefaultMeterColours();
 	//setColour(Label::textColourId, foregroundColour);
 	setColour(Label::backgroundColourId, backgroundColour);
 	//setColour(TextButton::buttonColourId, accentColour);

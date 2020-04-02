@@ -16,8 +16,8 @@
 
 #define SOUND_SPEED 343 // Speed of sound in m.s-1
 #define NUM_OCTAVE_BANDS 10 // Number of octave bands used in filter bank for room absorption
-#define AMBI_ORDER 2 // Ambisonic order
-#define N_AMBI_CH 9 // Associated number of Ambisonic channels [pow(AMBI_ORDER+1,2)]
+#define AMBI_ORDER 1 // Ambisonic order
+#define N_AMBI_CH 4 // Associated number of Ambisonic channels [pow(AMBI_ORDER+1,2)]
 #define AMBI2BIN_IR_LENGTH 221 // Length of loaded filters (in time samples)
 
 template <typename T>

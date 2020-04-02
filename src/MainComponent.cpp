@@ -10,19 +10,23 @@ MainComponent::MainComponent() :
 	audioIOComponent(),
 	auralisationComponent(),
 	loggingComponent(),
+	levelMeterComponent(foleys::LevelMeter::Default),
 	audioRecorder(),
 	delayLine(),
 	sourceImagesHandler(),
 	ambi2binContainer(),
 	audioSetupComponent(deviceManager, 0, 256, 0, 256, false, false, false, false)
 {
-	setLookAndFeel(&customLookAndFeel);
+		setLookAndFeel(&customLookAndFeel);
+
+		levelMeterComponent.setMeterSource(&levelMeterSource);
+		addAndMakeVisible(&levelMeterComponent);
 
 		// Set window dimensions.
 		setSize(650, 700);
 
     // Specify the required number of input and output channels.
-    setAudioChannels (2, 8);
+    setAudioChannels (0, N_AMBI_CH);
     
     // Add to change listeners.
     oscHandler.addChangeListener(this);
@@ -50,7 +54,10 @@ MainComponent::~MainComponent()
     // Fix denied access at close when sound playing,
     // see https://forum.juce.com/t/tutorial-playing-sound-files-raises-an-exception-on-2nd-load/15738/2
     audioIOComponent.transportSource.setSource(nullptr);
-    
+		setLookAndFeel(nullptr);
+
+		levelMeterComponent.setLookAndFeel(nullptr);
+
     shutdownAudio();
 }
 
@@ -123,7 +130,9 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
   {
       bufferToFill.clearActiveBufferRegion();
   }
-    
+   
+	levelMeterSource.measureBlock(*bufferToFill.buffer);
+
   // Check if source images need update (i.e. update called by OSC handler
   // while source images in the midst of a crossfade
   if( sourceImageHandlerNeedsUpdate && sourceImagesHandler.crossfadeOver )
@@ -195,17 +204,18 @@ void MainComponent::fillNextAudioBlock( AudioBuffer<float> *const audioBufferToF
         // loop over Ambisonic channels
         for (int k = 0; k < N_AMBI_CH; k++)
         {
-            ambi2binFilters[ 2*k ].process(ambisonicBuffer.getWritePointer(k+2)); // left
-            ambi2binFilters[2*k+1].process(ambisonicBuffer2ndEar.getWritePointer(k+2)); // right
+            //ambi2binFilters[ 2*k ].process(ambisonicBuffer.getWritePointer(k+2)); // left
+            //ambi2binFilters[2*k+1].process(ambisonicBuffer2ndEar.getWritePointer(k+2)); // right
             
             // collapse left channel, collapse right channel
-            ambisonicBuffer.addFrom(0, 0, ambisonicBuffer.getWritePointer(2+k), workingBuffer.getNumSamples());
-            ambisonicBuffer2ndEar.addFrom(1, 0, ambisonicBuffer2ndEar.getWritePointer(2+k), workingBuffer.getNumSamples());
-        }
+            //ambisonicBuffer.addFrom(0, 0, ambisonicBuffer.getWritePointer(2+k), workingBuffer.getNumSamples());
+            //ambisonicBuffer2ndEar.addFrom(1, 0, ambisonicBuffer2ndEar.getWritePointer(2+k), workingBuffer.getNumSamples());
+					audioBufferToFill->copyFrom(k, 0, ambisonicBuffer, k + 2, 0, workingBuffer.getNumSamples());
+				}
 
         // final rewrite to output buffer
-        audioBufferToFill->copyFrom(0, 0, ambisonicBuffer, 0, 0, workingBuffer.getNumSamples());
-        audioBufferToFill->copyFrom(1, 0, ambisonicBuffer2ndEar, 1, 0, workingBuffer.getNumSamples());
+        //audioBufferToFill->copyFrom(0, 0, ambisonicBuffer, 0, 0, workingBuffer.getNumSamples());
+        //audioBufferToFill->copyFrom(1, 0, ambisonicBuffer2ndEar, 1, 0, workingBuffer.getNumSamples());
     }
     
     //==========================================================================
@@ -404,11 +414,12 @@ void MainComponent::paint (Graphics& g)
 void MainComponent::resized()
 {
 	int h = getHeight() / 5;
-	int w = getWidth();
+	int w = getWidth() / 5;
 
-	audioIOComponent.setBounds(0, 0, w, h);
-	auralisationComponent.setBounds(0, h, w, 2 * h);
-	loggingComponent.setBounds(0, 3 * h, w, 2 * h);
+	audioIOComponent.setBounds(0, 0, 3 * w, h);
+	auralisationComponent.setBounds(0, h, 3 * w, 2 * h);
+	loggingComponent.setBounds(0, 3 * h, 3 * w, 2 * h);
+	levelMeterComponent.setBounds(3 * w, 0, 2 * w, 5 * h);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
