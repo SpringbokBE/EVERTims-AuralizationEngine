@@ -33,16 +33,16 @@ Or you can use the LevelMeterLookAndFeel directly because it inherits from juce:
 for your convenience. You can set it as default LookAndFeel, if you used the default, 
 or set it only to the meters, if you don't want it to interfere.
 
-All classes are in the namespace `foleys` to avoid collisions. You can either prefix each symbol, 
+All classes are in the namespace `ff` to avoid collisions. You can either prefix each symbol, 
 or import the namespace.
-N.B. for backward compatibility, `FFAU` is an alias for `foleys`.
+N.B. for backward compatibility, `FFAU` is an alias for `ff`.
 
     // In your Editor
     public:
         PluginEditor()
         {
             // adjust the colours to how you like them, e.g.
-            lnf.setColour (foleys::LevelMeter::lmMeterGradientLowColour, juce::Colours::green);
+            lnf.setColour (ff::LevelMeter::lmMeterGradientLowColour, juce::Colours::green);
     
             meter.setLookAndFeel (&lnf);
             meter.setMeterSource (&processor.getMeterSource());
@@ -55,12 +55,12 @@ N.B. for backward compatibility, `FFAU` is an alias for `foleys`.
         }
 
     private:
-        foleys::LevelMeterLookAndFeel lnf;
-        foleys::LevelMeter meter { foleys::LevelMeter::Minimal }; // See foleys::LevelMeter::MeterFlags for options
+        ff::LevelMeterLookAndFeel lnf;
+        ff::LevelMeter meter { ff::LevelMeter::Minimal }; // See ff::LevelMeter::MeterFlags for options
 
     // and in the processor:
     public:
-        foleys::LevelMeterSource& getMeterSource()
+        ff::LevelMeterSource& getMeterSource()
         {
             return meterSource;
         }
@@ -72,7 +72,7 @@ N.B. for backward compatibility, `FFAU` is an alias for `foleys`.
         }
 
     private:
-        foleys::LevelMeterSource meterSource;
+        ff::LevelMeterSource meterSource;
 
 
 OutlineBuffer
@@ -83,7 +83,7 @@ way you can see the outline of a signal running through. It can be used very sim
 
     // in your processor
     private:
-    foleys::OutlineBuffer outline;
+    ff::OutlineBuffer outline;
 
     // in prepareToPlay
     outline.setSize (getTotalNumInputChannels(), 1024);

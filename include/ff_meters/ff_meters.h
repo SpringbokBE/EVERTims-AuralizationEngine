@@ -1,6 +1,6 @@
 /*
  ==============================================================================
- Copyright (c) 2017-2020 Foleys Finest Audio Ltd. - Daniel Walz
+ Copyright (c) 2017-2020 ff Finest Audio Ltd. - Daniel Walz
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without modification,
@@ -29,12 +29,12 @@
  BEGIN_JUCE_MODULE_DECLARATION
 
  ID:            ff_meters
- vendor:        Foleys Finest Audio UG / Filmstro Ltd.
+ vendor:        ff Finest Audio UG / Filmstro Ltd.
  version:       0.9.0
  name:          Meters with GUI and LookAndFeel
  description:   Contains a metering Component, that can display live peak and RMS values 
  dependencies:  juce_audio_basics, juce_gui_basics, juce_events
- website:       http://www.foleysfinest.com/
+ website:       http://www.fffinest.com/
  license:       BSD V2 3-clause
 
  END_JUCE_MODULE_DECLARATION
@@ -65,10 +65,6 @@
 #define FF_AUDIO_ALLOW_ALLOCATIONS_IN_MEASURE_BLOCK 1
 #endif
 
-// #include <juce_audio_basics/juce_audio_basics.h>
-// #include <juce_gui_basics/juce_gui_basics.h>
-// #include <juce_events/juce_events.h>
-
 #include <../ff_meters/ff_meters_LevelMeterSource.h>
 #include <../ff_meters/ff_meters_LevelMeter.h>
 #include <../ff_meters/ff_meters_OutlineBuffer.h>
@@ -77,4 +73,4 @@
 #include <../ff_meters/ff_meters_LookAndFeel.h>
 
 // stay backwards compatible
-namespace FFAU=foleys;
+namespace FFAU=ff;

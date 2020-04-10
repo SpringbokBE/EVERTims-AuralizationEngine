@@ -1,6 +1,6 @@
 /*
  ==============================================================================
- Copyright (c) 2017 Filmstro Ltd. / 2017-2020 Foleys Finest Audio Ltd. - Daniel Walz
+ Copyright (c) 2017 Filmstro Ltd. / 2017-2020 ff Finest Audio Ltd. - Daniel Walz
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without modification,
@@ -39,7 +39,7 @@
 #include <vector>
 #include <numeric>
 
-namespace foleys
+namespace ff
 {
 
 /** @addtogroup ff_meters */
@@ -391,4 +391,4 @@ private:
 
 /*@}*/
 
-} // end namespace foleys
+} // end namespace ff

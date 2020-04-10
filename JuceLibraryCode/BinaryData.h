@@ -9,13 +9,13 @@
 namespace BinaryData
 {
     extern const char*   Doxyfile;
-    const int            DoxyfileSize = 79645;
+    const int            DoxyfileSize = 81463;
 
     extern const char*   LICENSE_md;
-    const int            LICENSE_mdSize = 1731;
+    const int            LICENSE_mdSize = 1758;
 
     extern const char*   README_md;
-    const int            README_mdSize = 3645;
+    const int            README_mdSize = 3719;
 
     extern const char*   evertims_logo_512_png;
     const int            evertims_logo_512_pngSize = 165475;

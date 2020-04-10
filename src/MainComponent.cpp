@@ -10,7 +10,7 @@ MainComponent::MainComponent() :
 	audioIOComponent(),
 	auralisationComponent(),
 	loggingComponent(),
-	levelMeterComponent(foleys::LevelMeter::Default),
+	levelMeterComponent(ff::LevelMeter::Compact),
 	audioRecorder(),
 	delayLine(),
 	sourceImagesHandler(),

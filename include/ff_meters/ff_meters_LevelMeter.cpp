@@ -1,6 +1,6 @@
 /*
  ==============================================================================
- Copyright (c) 2017 Filmstro Ltd. / 2017-2020 Foleys Finest Audio Ltd. - Daniel Walz
+ Copyright (c) 2017 Filmstro Ltd. / 2017-2020 ff Finest Audio Ltd. - Daniel Walz
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without modification,
@@ -39,7 +39,7 @@
 
 
 //==============================================================================
-foleys::LevelMeter::LevelMeter (const MeterFlags type)
+ff::LevelMeter::LevelMeter (const MeterFlags type)
   : meterType       (type)
 {
     onMaxLevelClicked = [](FFAU::LevelMeter& meter, [[maybe_unused]] int channel, [[maybe_unused]] juce::ModifierKeys mods)
@@ -59,39 +59,39 @@ foleys::LevelMeter::LevelMeter (const MeterFlags type)
     startTimerHz (refreshRate);
 }
 
-foleys::LevelMeter::~LevelMeter()
+ff::LevelMeter::~LevelMeter()
 {
     stopTimer();
 }
 
-void foleys::LevelMeter::setMeterFlags (const MeterFlags type)
+void ff::LevelMeter::setMeterFlags (const MeterFlags type)
 {
     meterType = type;
 }
 
-void foleys::LevelMeter::setMeterSource (LevelMeterSource* src)
+void ff::LevelMeter::setMeterSource (LevelMeterSource* src)
 {
     source = src;
     repaint();
 }
 
-void foleys::LevelMeter::setSelectedChannel (const int c)
+void ff::LevelMeter::setSelectedChannel (const int c)
 {
     selectedChannel = c;
 }
 
-void foleys::LevelMeter::setFixedNumChannels (const int numChannels)
+void ff::LevelMeter::setFixedNumChannels (const int numChannels)
 {
     fixedNumChannels = numChannels;
 }
 
-void foleys::LevelMeter::setRefreshRateHz (const int newRefreshRate)
+void ff::LevelMeter::setRefreshRateHz (const int newRefreshRate)
 {
     refreshRate = newRefreshRate;
     startTimerHz (refreshRate);
 }
 
-void foleys::LevelMeter::paint (juce::Graphics& g)
+void ff::LevelMeter::paint (juce::Graphics& g)
 {
     juce::Graphics::ScopedSaveState saved (g);
 
@@ -138,7 +138,7 @@ void foleys::LevelMeter::paint (juce::Graphics& g)
     }
 }
 
-void foleys::LevelMeter::resized ()
+void ff::LevelMeter::resized ()
 {
     juce::LookAndFeel& l = getLookAndFeel();
     if (LookAndFeelMethods* lnf = dynamic_cast<LookAndFeelMethods*> (&l))
@@ -149,12 +149,12 @@ void foleys::LevelMeter::resized ()
     backgroundNeedsRepaint = true;
 }
 
-void foleys::LevelMeter::visibilityChanged ()
+void ff::LevelMeter::visibilityChanged ()
 {
     backgroundNeedsRepaint = true;
 }
 
-void foleys::LevelMeter::timerCallback ()
+void ff::LevelMeter::timerCallback ()
 {
     if ((source && source->checkNewDataFlag()) || backgroundNeedsRepaint)
     {
@@ -165,7 +165,7 @@ void foleys::LevelMeter::timerCallback ()
     }
 }
 
-void foleys::LevelMeter::clearClipIndicator (const int channel)
+void ff::LevelMeter::clearClipIndicator (const int channel)
 {
     if (source == nullptr)
         return;
@@ -176,7 +176,7 @@ void foleys::LevelMeter::clearClipIndicator (const int channel)
         source->clearClipFlag (channel);
 }
 
-void foleys::LevelMeter::clearMaxLevelDisplay (const int channel)
+void ff::LevelMeter::clearMaxLevelDisplay (const int channel)
 {
     if (source == nullptr)
         return;
@@ -187,7 +187,7 @@ void foleys::LevelMeter::clearMaxLevelDisplay (const int channel)
         source->clearMaxNum (channel);
 }
 
-void foleys::LevelMeter::mouseDown (const juce::MouseEvent &event)
+void ff::LevelMeter::mouseDown (const juce::MouseEvent &event)
 {
     if (source == nullptr)
         return;
@@ -223,12 +223,12 @@ void foleys::LevelMeter::mouseDown (const juce::MouseEvent &event)
     }
 }
 
-void foleys::LevelMeter::addListener (foleys::LevelMeter::Listener* listener)
+void ff::LevelMeter::addListener (ff::LevelMeter::Listener* listener)
 {
     listeners.add (listener);
 }
 
-void foleys::LevelMeter::removeListener (foleys::LevelMeter::Listener* listener)
+void ff::LevelMeter::removeListener (ff::LevelMeter::Listener* listener)
 {
     listeners.remove (listener);
 }

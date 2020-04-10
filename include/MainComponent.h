@@ -83,9 +83,9 @@ private:
 		LoggingComponent loggingComponent;
 		CustomLookAndFeel customLookAndFeel;
 
-		foleys::LevelMeter levelMeterComponent;
-		foleys::LevelMeterSource levelMeterSource;
-		foleys::LevelMeterLookAndFeel levelMeterLnf;
+		ff::LevelMeter levelMeterComponent;
+		ff::LevelMeterSource levelMeterSource;
+		ff::LevelMeterLookAndFeel levelMeterLnf;
 
     std::unordered_map<Button*, std::string> buttonMap;
     std::unordered_map<ComboBox*, Array< std::string > > comboBoxMap;
