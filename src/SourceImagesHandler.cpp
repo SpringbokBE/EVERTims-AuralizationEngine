@@ -41,7 +41,7 @@ float SourceImagesHandler::getMaxDelayFuture()
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-void SourceImagesHandler::getNextAudioBlock(DelayLine* delayLine, AudioBuffer<float>& ambisonicBuffer)
+void SourceImagesHandler::getNextAudioBlock(DelayLine<float>* delayLine, AudioBuffer<float>& ambisonicBuffer)
 // Main: loop over sources images, apply delay + room coloration + spatialization
 {
 
@@ -64,7 +64,7 @@ void SourceImagesHandler::getNextAudioBlock(DelayLine* delayLine, AudioBuffer<fl
 			if (j < current->delays.size())
 			{
 				delayInFractionalSamples = current->delays[j] * localSampleRate;
-				delayLine->fillBufferWithDelayedChunk(workingBuffer, 0, 0, 0, delayInFractionalSamples, localSamplesPerBlockExpected);
+				delayLine->fillBufferWithPreciselyDelayedChunk(workingBuffer, 0, 0, 0, delayInFractionalSamples, localSamplesPerBlockExpected);
 				workingBuffer.applyGain(1.0 - crossfadeGain);
 			}
 			else { workingBuffer.clear(); }
@@ -73,7 +73,7 @@ void SourceImagesHandler::getNextAudioBlock(DelayLine* delayLine, AudioBuffer<fl
 			if (j < future->delays.size())
 			{
 				delayInFractionalSamples = future->delays[j] * localSampleRate;
-				delayLine->fillBufferWithDelayedChunk(workingBufferTemp, 0, 0, 0, delayInFractionalSamples, localSamplesPerBlockExpected);
+				delayLine->fillBufferWithPreciselyDelayedChunk(workingBufferTemp, 0, 0, 0, delayInFractionalSamples, localSamplesPerBlockExpected);
 				workingBufferTemp.applyGain(crossfadeGain);
 			}
 			else { workingBufferTemp.clear(); }
@@ -87,7 +87,7 @@ void SourceImagesHandler::getNextAudioBlock(DelayLine* delayLine, AudioBuffer<fl
 			if (j < current->delays.size())
 			{
 				delayInFractionalSamples = (current->delays[j] * localSampleRate);
-				delayLine->fillBufferWithDelayedChunk(workingBuffer, 0, 0, 0, delayInFractionalSamples, localSamplesPerBlockExpected);
+				delayLine->fillBufferWithPreciselyDelayedChunk(workingBuffer, 0, 0, 0, delayInFractionalSamples, localSamplesPerBlockExpected);
 			}
 		}
 
@@ -350,6 +350,7 @@ void SourceImagesHandler::setFilterBankSize(const unsigned int numFreqBands)
 void SourceImagesHandler::updateCrossfade()
 // Update crossfade mechanism (to avoid zipper noise with smooth gains transitions)
 {
+
 	// either update crossfade
 	if (crossfadeGain < 1.0)
 	{

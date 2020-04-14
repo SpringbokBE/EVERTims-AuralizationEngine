@@ -35,7 +35,7 @@ class ReverbTail
 		void defineFdnFeedbackMatrix();
 
 		// Local delay line
-		DelayLine delayLine;
+		DelayLine<float> delayLine;
     
 		// Setup FDN (static FDN order of 16 is max for now)
 		std::array<unsigned int, MAX_FDN_ORDER> fdnDelays; // in samples

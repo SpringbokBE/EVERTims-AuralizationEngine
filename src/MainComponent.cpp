@@ -86,9 +86,10 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
     localSampleRate = sampleRate;
     localSamplesPerBlockExpected = samplesPerBlockExpected;
     
-    // Initialise delay line.
+    // Initialise the DelayLine to be able to hold 1 second of samples.
     delayLine.prepareToPlay(samplesPerBlockExpected, sampleRate);
-    delayLine.setSize(1, sampleRate); // arbitrary length of 1 sec
+    delayLine.setSize(1, sampleRate);
+    
     sourceImagesHandler.prepareToPlay (samplesPerBlockExpected, sampleRate);
     
     // Initialise ambi 2 bin decoding: fill in data in ABIR filtered and ABIR filter themselves
@@ -164,7 +165,6 @@ void MainComponent::processAmbisonicBuffer( AudioBuffer<float> *const audioBuffe
         {
             // get maximum required delay line duration
             float maxDelay = sourceImagesHandler.getMaxDelayFuture();
-            
             // get associated required delay line buffer length
             int updatedDelayLineLength = (int)( 1.5 * maxDelay * localSampleRate); // longest delay creates noisy sound if delay line is exactly 1* its duration
             
@@ -180,10 +180,8 @@ void MainComponent::processAmbisonicBuffer( AudioBuffer<float> *const audioBuffe
         
         // loop over sources images, apply delay + room coloration + spatialization
         sourceImagesHandler.getNextAudioBlock( & delayLine, ambisonicBuffer );
-        
-        // increment delay line write position
-        delayLine.incrementWritePosition(workingBuffer.getNumSamples());
-        
+
+        delayLine.incrementWriteIndex(workingBuffer.getNumSamples());
     }
     
 }
@@ -204,18 +202,18 @@ void MainComponent::fillNextAudioBlock( AudioBuffer<float> *const audioBufferToF
         // loop over Ambisonic channels
         for (int k = 0; k < N_AMBI_CH; k++)
         {
-            //ambi2binFilters[ 2*k ].process(ambisonicBuffer.getWritePointer(k+2)); // left
-            //ambi2binFilters[2*k+1].process(ambisonicBuffer2ndEar.getWritePointer(k+2)); // right
+            ambi2binFilters[ 2*k ].process(ambisonicBuffer.getWritePointer(k+2)); // left
+            ambi2binFilters[2*k+1].process(ambisonicBuffer2ndEar.getWritePointer(k+2)); // right
             
             // collapse left channel, collapse right channel
-            //ambisonicBuffer.addFrom(0, 0, ambisonicBuffer.getWritePointer(2+k), workingBuffer.getNumSamples());
-            //ambisonicBuffer2ndEar.addFrom(1, 0, ambisonicBuffer2ndEar.getWritePointer(2+k), workingBuffer.getNumSamples());
-					audioBufferToFill->copyFrom(k, 0, ambisonicBuffer, k + 2, 0, workingBuffer.getNumSamples());
+            ambisonicBuffer.addFrom(0, 0, ambisonicBuffer.getWritePointer(2+k), workingBuffer.getNumSamples());
+            ambisonicBuffer2ndEar.addFrom(1, 0, ambisonicBuffer2ndEar.getWritePointer(2+k), workingBuffer.getNumSamples());
+					//audioBufferToFill->copyFrom(k, 0, ambisonicBuffer, k + 2, 0, workingBuffer.getNumSamples());
 				}
 
         // final rewrite to output buffer
-        //audioBufferToFill->copyFrom(0, 0, ambisonicBuffer, 0, 0, workingBuffer.getNumSamples());
-        //audioBufferToFill->copyFrom(1, 0, ambisonicBuffer2ndEar, 1, 0, workingBuffer.getNumSamples());
+        audioBufferToFill->copyFrom(0, 0, ambisonicBuffer, 0, 0, workingBuffer.getNumSamples());
+        audioBufferToFill->copyFrom(1, 0, ambisonicBuffer2ndEar, 1, 0, workingBuffer.getNumSamples());
     }
     
     //==========================================================================

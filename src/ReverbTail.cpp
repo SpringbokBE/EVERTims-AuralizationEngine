@@ -134,7 +134,7 @@ void ReverbTail::extractBusToBuffer(AudioBuffer<float>& destination)
 	}
 
 	// increment delay line write position
-	delayLine.incrementWritePosition(localSamplesPerBlockExpected);
+	delayLine.incrementWriteIndex(localSamplesPerBlockExpected);
 
 	// clear reverb bus
 	reverbBusBuffers.clear();

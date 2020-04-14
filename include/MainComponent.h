@@ -108,7 +108,7 @@ private:
     AudioRecorder audioRecorder;
     
     // Delay line
-    DelayLine delayLine;
+    DelayLine<float> delayLine;
     bool requireDelayLineSizeUpdate = false;
    
     // Sources images

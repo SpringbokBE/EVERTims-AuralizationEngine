@@ -18,7 +18,7 @@ class AudioRecorder
 private:
 
     // Ring buffer used to write audio data in main audio loop, awaiting writing to disk.
-    DelayLine delayLine;
+    DelayLine<float> delayLine;
     
     // The thread that will write our audio data to disk.
     TimeSliceThread backgroundThread { "Audio Recorder Thread" };

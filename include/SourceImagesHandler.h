@@ -20,7 +20,7 @@ class SourceImagesHandler
 		~SourceImagesHandler(){};
 
 		void prepareToPlay(const unsigned int samplesPerBlockExpected, const double sampleRate);
-		void getNextAudioBlock(DelayLine* delayLine, AudioBuffer<float>& ambisonicBuffer);
+		void getNextAudioBlock(DelayLine<float>* delayLine, AudioBuffer<float>& ambisonicBuffer);
 		float getMaxDelayFuture();
 		void updateFromOscHandler(OSCHandler& oscHandler);
 		void setFilterBankSize(const unsigned int numFreqBands);
