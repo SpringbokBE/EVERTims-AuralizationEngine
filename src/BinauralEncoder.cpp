@@ -101,9 +101,12 @@ void BinauralEncoder::setPosition(double azim, double elev)
 	// get azim / elev indices in hrir array along with associated gains for panning across HRIR
 	// (panning across 4 nearest neighbors (in azim/elev) of current position
 
+	// TODO: fix temporary workaround
+	if (azim < -M_PI || azim > M_PI || elev < -M_PI / 2 || elev > M_PI / 2) return;
+
 	// make sure values are in expected range
 	jassert(azim >= -M_PI && azim <= M_PI);
-	jassert(elev >= -M_PI / 2 && elev <= M_PI / 2);
+  jassert(elev >= -M_PI / 2 && elev <= M_PI / 2);
 
 	// rad 2 deg
 	azim *= (180 / M_PI);

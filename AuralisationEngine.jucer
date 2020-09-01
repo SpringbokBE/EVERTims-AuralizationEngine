@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="zqWlzC" name="AuralisationEngine" projectType="guiapp" version="0.3.3"
               bundleIdentifier="com.evertims.auralisation-engine" includeBinaryInAppConfig="1"
-              jucerVersion="5.4.7" displaySplashScreen="1" reportAppUsage="1"
+              jucerVersion="5.4.5" displaySplashScreen="1" reportAppUsage="1"
               splashScreenColour="Dark" cppLanguageStandard="11" companyCopyright="">
   <MAINGROUP id="aSpPbd" name="AuralisationEngine">
     <GROUP id="{C89C0747-CED7-902E-BDD8-0E88F14BEAEB}" name="include">
@@ -44,6 +44,7 @@
       <FILE id="vXP376" name="BinauralEncoder.h" compile="0" resource="0"
             file="include/BinauralEncoder.h"/>
       <FILE id="BUA01r" name="DelayLine.h" compile="0" resource="0" file="include/DelayLine.h"/>
+      <FILE id="EyHgYC" name="DelayLine.hpp" compile="0" resource="0" file="include/DelayLine.hpp"/>
       <FILE id="gIGgnk" name="DirectivityHandler.h" compile="0" resource="0"
             file="include/DirectivityHandler.h"/>
       <FILE id="Gci68m" name="FilterBank.h" compile="0" resource="0" file="include/FilterBank.h"/>
@@ -101,7 +102,6 @@
             file="src/BinauralEncoder.cpp"/>
       <FILE id="T3HU5t" name="CustomLookAndFeel.cpp" compile="1" resource="0"
             file="src/CustomLookAndFeel.cpp"/>
-      <FILE id="hS2WBx" name="DelayLine.cpp" compile="1" resource="0" file="src/DelayLine.cpp"/>
       <FILE id="mtq9EQ" name="DirectivityHandler.cpp" compile="1" resource="0"
             file="src/DirectivityHandler.cpp"/>
       <FILE id="C6HXgt" name="FilterBank.cpp" compile="1" resource="0" file="src/FilterBank.cpp"/>
@@ -163,18 +163,18 @@
                        targetName="AuralisationEngine64"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_osc" path="..\..\..\..\Program Files\JUCE\modules"/>
-        <MODULEPATH id="juce_gui_extra" path="..\..\..\..\Program Files\JUCE\modules"/>
-        <MODULEPATH id="juce_gui_basics" path="..\..\..\..\Program Files\JUCE\modules"/>
-        <MODULEPATH id="juce_graphics" path="..\..\..\..\Program Files\JUCE\modules"/>
-        <MODULEPATH id="juce_events" path="..\..\..\..\Program Files\JUCE\modules"/>
-        <MODULEPATH id="juce_data_structures" path="..\..\..\..\Program Files\JUCE\modules"/>
-        <MODULEPATH id="juce_core" path="..\..\..\..\Program Files\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_utils" path="..\..\..\..\Program Files\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_processors" path="..\..\..\..\Program Files\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_formats" path="..\..\..\..\Program Files\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_devices" path="..\..\..\..\Program Files\JUCE\modules"/>
-        <MODULEPATH id="juce_audio_basics" path="..\..\..\..\Program Files\JUCE\modules"/>
+        <MODULEPATH id="juce_osc" path="..\JUCE\modules"/>
+        <MODULEPATH id="juce_gui_extra" path="..\JUCE\modules"/>
+        <MODULEPATH id="juce_gui_basics" path="..\JUCE\modules"/>
+        <MODULEPATH id="juce_graphics" path="..\JUCE\modules"/>
+        <MODULEPATH id="juce_events" path="..\JUCE\modules"/>
+        <MODULEPATH id="juce_data_structures" path="..\JUCE\modules"/>
+        <MODULEPATH id="juce_core" path="..\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_utils" path="..\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_processors" path="..\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_formats" path="..\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_devices" path="..\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_basics" path="..\JUCE\modules"/>
       </MODULEPATHS>
     </VS2019>
   </EXPORTFORMATS>

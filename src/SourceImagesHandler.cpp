@@ -112,6 +112,7 @@ void SourceImagesHandler::getNextAudioBlock(DelayLine<float>* delayLine, AudioBu
 		// APPLY FREQUENCY SPECIFIC GAINS (ABSORPTION, DIRECTIVITY)
 
 		// decompose in frequency bands
+		//DBG( "Number of images sources in getNextAudioBlock = " << numSourceImages);
 		filterBank.decomposeBuffer(workingBuffer, bandBuffer, j);
 
 		// apply absorption gains and recompose
@@ -274,6 +275,21 @@ void SourceImagesHandler::updateFromOscHandler(OSCHandler& oscHandler)
 	// should not need: if( !crossfadeOver ){ return; }
 
 	future->ids = oscHandler.getSourceImageIDs();
+	
+
+
+	//DBG("current->ids :");
+	//for(auto id : current->ids)
+	//{
+	//	DBG(id);
+	//}
+
+	//DBG("future->ids :");
+	//for(auto id : future->ids)
+	//{
+	//	DBG(id);
+	//}
+	
 	future->delays = oscHandler.getSourceImageDelays();
 	future->pathLengths = oscHandler.getSourceImagePathsLength();
 	directPathId = oscHandler.getDirectPathId();
@@ -317,15 +333,18 @@ void SourceImagesHandler::updateFromOscHandler(OSCHandler& oscHandler)
 	// update binaural encoder (even if not enabled, not cpu demanding and that way it's ready to use)
 	if (current->ids.size() > 0 && directPathId > -1)
 	{
-		binauralEncoder.setPosition(sourceImageDOAs[directPathId](0), sourceImageDOAs[directPathId](1));
+		int directPathIndex = distance(future->ids.begin(), find(future->ids.begin(), future->ids.end(), directPathId));
+		binauralEncoder.setPosition(sourceImageDOAs[directPathIndex](0), sourceImageDOAs[directPathIndex](1));
 	}
 
 	// update filter bank size
+	//DBG("filterBank.setNumFilters(filterBank.numOctaveBands, " << (int) future->ids.size() << ");");
 	filterBank.setNumFilters(filterBank.numOctaveBands, future->ids.size());
 
 	// trigger crossfade mechanism: default
 	crossfadeOver = false;
-	numSourceImages = max(current->ids.size(), future->ids.size());
+	//numSourceImages = max(current->ids.size(), future->ids.size());
+	numSourceImages = future->ids.size();
 	crossfadeGain = 0.0;
 
 	// crossfade mechanism: zero image source scenario (make sure MainComponent continues to play unprocessed input)

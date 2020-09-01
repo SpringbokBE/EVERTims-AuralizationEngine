@@ -194,7 +194,7 @@ void MainComponent::fillNextAudioBlock( AudioBuffer<float> *const audioBufferToF
     //==========================================================================
     // SPATIALISATION: Ambisonic decoding + virtual speaker approach + binaural
     
-    if ( sourceImagesHandler.numSourceImages > 0 )
+    if ( sourceImagesHandler.numSourceImages > 0)
     {
         // duplicate channel before filtering for two ears
         ambisonicBuffer2ndEar = ambisonicBuffer;
@@ -202,18 +202,18 @@ void MainComponent::fillNextAudioBlock( AudioBuffer<float> *const audioBufferToF
         // loop over Ambisonic channels
         for (int k = 0; k < N_AMBI_CH; k++)
         {
-            ambi2binFilters[ 2*k ].process(ambisonicBuffer.getWritePointer(k+2)); // left
-            ambi2binFilters[2*k+1].process(ambisonicBuffer2ndEar.getWritePointer(k+2)); // right
-            
+            //ambi2binFilters[ 2*k ].process(ambisonicBuffer.getWritePointer(k+2)); // left
+            //ambi2binFilters[2*k+1].process(ambisonicBuffer2ndEar.getWritePointer(k+2)); // right
+
             // collapse left channel, collapse right channel
-            ambisonicBuffer.addFrom(0, 0, ambisonicBuffer.getWritePointer(2+k), workingBuffer.getNumSamples());
-            ambisonicBuffer2ndEar.addFrom(1, 0, ambisonicBuffer2ndEar.getWritePointer(2+k), workingBuffer.getNumSamples());
-					//audioBufferToFill->copyFrom(k, 0, ambisonicBuffer, k + 2, 0, workingBuffer.getNumSamples());
+            //ambisonicBuffer.addFrom(0, 0, ambisonicBuffer.getWritePointer(2+k), workingBuffer.getNumSamples());
+            //ambisonicBuffer2ndEar.addFrom(1, 0, ambisonicBuffer2ndEar.getWritePointer(2+k), workingBuffer.getNumSamples());
+					  audioBufferToFill->copyFrom(k, 0, ambisonicBuffer, k + 2, 0, workingBuffer.getNumSamples());
 				}
 
         // final rewrite to output buffer
-        audioBufferToFill->copyFrom(0, 0, ambisonicBuffer, 0, 0, workingBuffer.getNumSamples());
-        audioBufferToFill->copyFrom(1, 0, ambisonicBuffer2ndEar, 1, 0, workingBuffer.getNumSamples());
+        //audioBufferToFill->copyFrom(0, 0, ambisonicBuffer, 0, 0, workingBuffer.getNumSamples());
+        //audioBufferToFill->copyFrom(1, 0, ambisonicBuffer2ndEar, 1, 0, workingBuffer.getNumSamples());
     }
     
     //==========================================================================

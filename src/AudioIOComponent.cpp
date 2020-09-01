@@ -37,8 +37,8 @@ AudioIOComponent::AudioIOComponent()
 	buttonSetupAudio.setButtonText("SETUP");
 
 	addAndMakeVisible(&sliderAudioGain);
-	sliderAudioGain.setRange(0.0, 4.0);
-	sliderAudioGain.setValue(1.0);
+	sliderAudioGain.setRange(0.0, 1.0);
+	sliderAudioGain.setValue(0.05);
 	sliderAudioGain.setSliderStyle(Slider::LinearHorizontal);
 	sliderAudioGain.setTextBoxStyle(Slider::TextBoxRight, true, 70, 20);
 

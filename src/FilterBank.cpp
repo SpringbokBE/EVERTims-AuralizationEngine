@@ -93,6 +93,8 @@ void FilterBank::decomposeBuffer(const AudioBuffer<float>& source, AudioBuffer<f
 	{
 		// filter the remaining spectrum
 		bufferFiltered = bufferRemains;
+		//DBG("sourceImageId = "<< (int) sourceImageId << " while octaveFilterBanks.size() = " << (int) octaveFilterBanks.size());
+		jassert((int) sourceImageId < octaveFilterBanks.size());
 		octaveFilterBanks[sourceImageId][i].processSamples(bufferFiltered.getWritePointer(0), localSamplesPerBlockExpected);
 
 		// substract just processed band from remaining spectrum
