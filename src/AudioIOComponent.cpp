@@ -154,13 +154,12 @@ void AudioIOComponent::saveIR(const AudioBuffer<float>& source, double sampleRat
 
 	// Create an OutputStream to write to our destination file...
 	file.deleteFile();
-	ScopedPointer<FileOutputStream> fileStream(file.createOutputStream());
 
-	if (fileStream != nullptr)
+	if(auto fileStream = std::unique_ptr<OutputStream>{ file.createOutputStream() })
 	{
 		// Now create a WAV writer object that writes to our output stream...
 		WavAudioFormat wavFormat;
-		AudioFormatWriter* writer = wavFormat.createWriterFor(fileStream, sampleRate, source.getNumChannels(), 24, StringPairArray(), 0);
+		AudioFormatWriter* writer = wavFormat.createWriterFor(fileStream.release(), sampleRate, source.getNumChannels(), 24, StringPairArray(), 0);
 
 		if (writer != nullptr)
 		{
